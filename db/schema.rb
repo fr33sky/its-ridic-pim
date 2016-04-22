@@ -11,13 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160422161000) do
+ActiveRecord::Schema.define(version: 20160422164441) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "adjustments", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "adjustment_type_id"
+    t.integer  "adjusted_quantity"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "adjustments", ["adjustment_type_id"], name: "index_adjustments_on_adjustment_type_id"
+  add_index "adjustments", ["product_id"], name: "index_adjustments_on_product_id"
 
   create_table "contacts", force: :cascade do |t|
     t.string   "name"
@@ -71,6 +82,7 @@ ActiveRecord::Schema.define(version: 20160422161000) do
     t.float    "sale_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "quantity"
   end
 
   add_index "sales", ["contact_id"], name: "index_sales_on_contact_id"

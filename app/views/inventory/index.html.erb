@@ -1,0 +1,22 @@
+<h1>Inventory Levels</h1>
+
+<table class="table table-responsive">
+  <thead>
+    <th>Product</th>
+    <th>Ordered</th>
+    <th>Sold</th>
+    <th>Adjusted</th>
+    <th>On Hand</th>
+  </thead>
+  <tbody>
+    <% @products.each do |product| %>
+      <tr>
+        <td><%= product.name %></td>
+        <td><%= product.quantity_ordered %></td>
+        <td><%= product.quantity_sold %></td>
+        <td><%= product.quantity_adjusted %></td>
+        <td><%= product.on_hand %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

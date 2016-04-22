@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'inventory/index'
+
+  resources :adjustments
   resources :adjustment_types
   resources :sales
   resources :payments
@@ -8,4 +11,5 @@ Rails.application.routes.draw do
   resources :products
   resources :orders
   resources :contacts
+  resources :inventory, only: [:index]
 end

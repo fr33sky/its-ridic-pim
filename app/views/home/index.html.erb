@@ -59,20 +59,51 @@
       </div> 
       <div class="panel-body">
         <%= link_to new_adjustment_type_path, class: "btn btn-warning" do %>
-          <i class="glyphicon glyphicon-usd"> Add Adjustment Type</i>
+          <i class="glyphicon glyphicon-erase"> Add Adjustment Type</i>
         <% end %>
       </div> 
     </div>
   </div>
 </div>
 
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Sales</h3> 
-  </div> 
-  <div class="panel-body">
-    <%= link_to new_sale_path, class: "btn btn-warning" do %>
-      <i class="glyphicon glyphicon-shopping-cart"> Add Sale</i>
-    <% end %>
-  </div> 
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Sales</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to new_sale_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-shopping-cart"> Add Sale</i>
+        <% end %>
+      </div> 
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Adjustments</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to new_adjustment_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-scale"> Add Adjustment</i>
+        <% end %>
+      </div> 
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Inventory</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to inventory_index_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-dashboard"> Inventory</i>
+        <% end %>
+      </div> 
+    </div>
+  </div>
 </div>
