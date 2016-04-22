@@ -1,47 +1,69 @@
 <h1>It's Ridic! PIM</h1>
 
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Contacts</h3> 
-  </div> 
-  <div class="panel-body">
-    <%= link_to new_contact_path, class: "btn btn-warning" do %>
-      <i class="glyphicon glyphicon-user"> Add Vendor</i>
-    <% end %>
+<div class="row">
+  <div class="col-md-4">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Contacts</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to new_contact_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-user"> Add Vendor</i>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Products</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to new_product_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-barcode"> Add Product</i>
+        <% end %>
+      </div> 
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Orders</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to new_order_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-list-alt"> Add Order</i>
+        <% end %>
+      </div> 
+    </div>
   </div>
 </div>
 
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Products</h3> 
-  </div> 
-  <div class="panel-body">
-    <%= link_to new_product_path, class: "btn btn-warning" do %>
-      <i class="glyphicon glyphicon-barcode"> Add Product</i>
-    <% end %>
-  </div> 
-</div>
-
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Orders</h3> 
-  </div> 
-  <div class="panel-body">
-    <%= link_to new_order_path, class: "btn btn-warning" do %>
-      <i class="glyphicon glyphicon-list-alt"> Add Order</i>
-    <% end %>
-  </div> 
-</div>
-
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Payment Types</h3> 
-  </div> 
-  <div class="panel-body">
-    <%= link_to new_payment_path, class: "btn btn-warning" do %>
-      <i class="glyphicon glyphicon-usd"> Add Payment Type</i>
-    <% end %>
-  </div> 
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Payment Types</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to new_payment_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-usd"> Add Payment Type</i>
+        <% end %>
+      </div> 
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Adjustment Types</h3> 
+      </div> 
+      <div class="panel-body">
+        <%= link_to new_adjustment_type_path, class: "btn btn-warning" do %>
+          <i class="glyphicon glyphicon-usd"> Add Adjustment Type</i>
+        <% end %>
+      </div> 
+    </div>
+  </div>
 </div>
 
 <div class="panel panel-primary">
