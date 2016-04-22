@@ -1,0 +1,35 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+body {
+  background-color: #303133;
+}
+
+h1, h2, h3, h4, p, label {
+  color: white;
+}
+
+h1 {
+  font-family: 'Lato', sans-serif;
+}
+
+.panel-primary {
+  background-color: #1D1D1F;
+  border-color: white;
+}
+
+.panel-primary > .panel-heading, .panel-title {
+  background-color: #363749;
+  border-color: white;
+}
+
+.btn-warning {
+  color: #fff;
+  background-color: #BB3D2D;
+  border-color: #BB3D2D;
+}
+
+.btn-warning:hover {
+  background-color: #363749;
+  border-color: #363749;
+}

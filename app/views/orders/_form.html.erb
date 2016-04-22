@@ -1,0 +1,16 @@
+<%= simple_form_for(@order, html: { class: "form-horizontal" }) do |f| %>
+  <%= f.input :name %>
+  <%= f.label :vendor %>
+  <%= f.collection_select :contact_id, Contact.all, :id, :name %>
+  <h3>Order Items</h3>
+  <div id="order-items">
+    <%= f.simple_fields_for :order_items do |oi| %>
+      <%= render 'order_item_fields', :f => oi %>
+    <% end %>
+    <div class="links" style="margin-top: 1%; margin-bottom: 1%;">
+      <%= link_to_add_association 'add item', f, :order_items, class: "btn btn-warning" %>
+    </div>
+  </div>
+    <%= f.submit 'Save' %>
+<% end %>
+
