@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160415020058) do
+ActiveRecord::Schema.define(version: 20160422160423) do
 
   create_table "contacts", force: :cascade do |t|
     t.string   "name"
@@ -44,6 +44,12 @@ ActiveRecord::Schema.define(version: 20160415020058) do
 
   add_index "orders", ["contact_id"], name: "index_orders_on_contact_id"
 
+  create_table "payments", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "products", force: :cascade do |t|
     t.string   "name"
     t.string   "upc"
@@ -51,5 +57,18 @@ ActiveRecord::Schema.define(version: 20160415020058) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "sales", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "payment_id"
+    t.integer  "contact_id"
+    t.float    "sale_price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "sales", ["contact_id"], name: "index_sales_on_contact_id"
+  add_index "sales", ["payment_id"], name: "index_sales_on_payment_id"
+  add_index "sales", ["product_id"], name: "index_sales_on_product_id"
 
 end
