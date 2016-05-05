@@ -1,14 +1,30 @@
-<p id="notice"><%= notice %></p>
-
+<h1>Purchase Order</h1>
+<h3><%= @order.name %></h3>
 <p>
-  <strong>Name:</strong>
-  <%= @order.name %>
+To: <%= @order.contact.name %><br/>
+Address: <%= @order.contact.address %><br/>
+<%= @order.contact.city %><br/>
+<%= @order.contact.state %><br/>
+<%= @order.contact.postal_code %><br/>
+<%= @order.contact.country %><br/>
 </p>
-
-<p>
-  <strong>Contact:</strong>
-  <%= @order.contact %>
-</p>
-
+<table class="table table-responsive">
+  <thead>
+    <th>Product</th>
+    <th>Quantity</th>
+    <th>Cost</th>
+    <th>Average Cost</th>
+  </thead>
+  <tbody>
+    <% @order.order_items.each do |item| %>
+      <tr>
+        <td><%= item.product.name %></td>
+        <td><%= item.quantity %></td>
+        <td><%= item.cost %></td>
+        <td><%= item.average_cost %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 <%= link_to 'Edit', edit_order_path(@order) %> |
 <%= link_to 'Back', orders_path %>

@@ -8,7 +8,10 @@
       </div> 
       <div class="panel-body">
         <%= link_to new_contact_path, class: "btn btn-warning" do %>
-          <i class="glyphicon glyphicon-user"> Add Vendor</i>
+          <i class="glyphicon glyphicon-user"> Add Contact</i>
+        <% end %>
+        <%= link_to contacts_path, class: "btn btn-primary" do %>
+          <i class="glyphicon glyphicon-user">View Contacts</i>
         <% end %>
       </div>
     </div>
@@ -22,6 +25,9 @@
         <%= link_to new_product_path, class: "btn btn-warning" do %>
           <i class="glyphicon glyphicon-barcode"> Add Product</i>
         <% end %>
+        <%= link_to products_path, class: "btn btn-primary" do %>
+          <i class="glyphicon glyphicon-barcode"> View Products</i>
+        <% end %>
       </div> 
     </div>
   </div>
@@ -33,6 +39,9 @@
       <div class="panel-body">
         <%= link_to new_order_path, class: "btn btn-warning" do %>
           <i class="glyphicon glyphicon-list-alt"> Add Order</i>
+        <% end %>
+        <%= link_to orders_path, class: "btn btn-primary" do %>
+          <i class="glyphicon glyphicon-list-alt"> View Orders</i>
         <% end %>
       </div> 
     </div>

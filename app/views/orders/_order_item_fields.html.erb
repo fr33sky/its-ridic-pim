@@ -7,16 +7,19 @@
           <%= f.number_field :quantity, class: "form-control" %>
         </div>
       </div>
-      <div class="col-md-1"></div>
+      <div class="col-md-2">
+        <%= f.label :cost %>
+        <%= f.number_field :cost, class: "form-control" %>
+      </div>
       <div class="col-md-2">
         <div class="form-group inline">
           <%= f.label :product %>
           <%= f.collection_select :product_id, Product.all, :id, :name, {}, { class: "form-control" } %>
         </div>
       </div>
-      <div class="col-md-7">
+      <div class="col-md-6">
         <br />
-        <%= link_to_remove_association "remove item", f, class: "btn btn-warning", style: "margin-top: 0.5%;" %>
+        <%= link_to_remove_association "X", f, class: "btn btn-warning", style: "margin-top: 0.5%;" %>
       </div>
     </div>
   </div>

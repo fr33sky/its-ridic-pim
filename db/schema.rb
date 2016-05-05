@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160422164441) do
+ActiveRecord::Schema.define(version: 20160504174710) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
@@ -45,8 +45,10 @@ ActiveRecord::Schema.define(version: 20160422164441) do
     t.integer  "quantity"
     t.integer  "order_id"
     t.integer  "product_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.float    "cost"
+    t.float    "average_cost"
   end
 
   add_index "order_items", ["order_id"], name: "index_order_items_on_order_id"
@@ -57,6 +59,7 @@ ActiveRecord::Schema.define(version: 20160422164441) do
     t.integer  "contact_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "user_date"
   end
 
   add_index "orders", ["contact_id"], name: "index_orders_on_contact_id"

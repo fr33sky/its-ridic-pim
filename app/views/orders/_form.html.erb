@@ -1,4 +1,6 @@
 <%= simple_form_for(@order, html: { class: "form-horizontal" }) do |f| %>
+  <%= link_to "Add Date", "#", id: "adduserdate" %>
+  <%= f.input :user_date, include_blank: true %>
   <%= f.input :name %>
   <%= f.label :vendor %>
   <%= f.collection_select :contact_id, Contact.all, :id, :name, {}, { class: "form-control" } %>
@@ -14,3 +16,18 @@
     <%= f.submit 'Save', class: "btn btn-primary" %>
 <% end %>
 
+<script>
+$(document).ready(function() {
+  function toggleDate() {
+    $(".order_user_date").toggle();
+    if ($("#adduserdate").text() == "Add Date") {
+      $("#adduserdate").text("Hide Date");
+    } else {
+      $("#adduserdate").text("Add Date");
+    }
+  }
+  $(".order_user_date").hide();
+  var addUserDate = document.getElementById('adduserdate');
+  addUserDate.addEventListener('click', toggleDate, false);
+});
+</script>

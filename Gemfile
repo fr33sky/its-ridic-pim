@@ -14,6 +14,9 @@ gem 'country_select'
 gem 'cocoon'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'acts-as-taggable-on', '~> 3.4'
+gem 'rspec-rails'
+gem 'factory_girl_rails'
+gem 'timecop'
 
 group :development, :test do
   gem 'byebug'
