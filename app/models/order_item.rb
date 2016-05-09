@@ -3,18 +3,16 @@ class OrderItem < ActiveRecord::Base
   belongs_to :product
   before_save :set_average_cost
 
-  private
 
   def last_order_average_cost
-    last_order = Order.joins(:order_items).where("product_id = ?", self.product_id).order("user_date DESC").first
-    OrderItem.where("order_id = ? AND product_id = ?", last_order.id, self.product_id).first.average_cost
+    OrderItem.joins(:order).where("product_id = ? AND user_date < ?", self.product.id, self.order.user_date).order("user_date DESC").first.average_cost
   end
 
-  def last_quantity
+  def last_quantity(oi=self)
     # Anything ordered, sold, and adjusted prior to this order
-    ordered  = OrderItem.joins(:order).where("product_id = ? AND user_date < ?", self.product_id, self.order.user_date).sum(:quantity)
-    sold     = Sale.where("product_id = ? AND created_at < ?", self.product_id, self.order.user_date).sum(:quantity)
-    adjusted = Adjustment.where("product_id = ? AND created_at < ?", self.product_id, self.order.user_date).sum(:adjusted_quantity)
+    ordered  = OrderItem.joins(:order).where("product_id = ? AND user_date < ?", oi.product_id, oi.order.user_date).sum(:quantity)
+    sold     = Sale.where("product_id = ? AND created_at < ?", oi.product_id, oi.order.user_date).sum(:quantity)
+    adjusted = Adjustment.where("product_id = ? AND created_at < ?", oi.product_id, oi.order.user_date).sum(:adjusted_quantity)
     ordered - sold + adjusted
   end
 
@@ -28,7 +26,26 @@ class OrderItem < ActiveRecord::Base
       end
     else
       # oops order
-      self.average_cost = ((last_order_average_cost * last_quantity) + self.cost) / ( last_quantity + self.quantity )
+      # Are there any orders after this oops order?  If so, must update them too
+      if OrderItem.joins(:order).where("product_id = ? AND user_date > ?", self.product_id, self.order.user_date).count > 0
+        # If so, must update current AVCO and then update all ones after that one.
+        self.average_cost = ((last_order_average_cost * last_quantity) + self.cost) / ( last_quantity + self.quantity )
+        after_orders = OrderItem.joins(:order).where("product_id = ? AND user_date > ?", 
+                                      self.product_id, self.order.user_date).order("user_date ASC")
+        after_orders.each_with_index do |oi, index|
+          if index == 0
+            avco = ((self.average_cost * (last_quantity + self.quantity)) + oi.cost) / ( (last_quantity +  self.quantity) + oi.quantity )
+            oi.update_column(:average_cost, avco)
+          else
+            avco = ((after_orders[index - 1].average_cost * (last_quantity(oi) + after_orders[index - 1].quantity)) + oi.cost) / ( (last_quantity(oi) +  after_orders[index - 1].quantity) + oi.quantity )
+            oi.update_column(:average_cost, avco)
+          end
+        end
+      else
+        # If not, just update using the last order
+        self.average_cost = ((last_order_average_cost * last_quantity) + self.cost) / ( last_quantity + self.quantity )
+      end
+      #self.average_cost = ((last_order_average_cost * last_quantity) + self.cost) / ( last_quantity + self.quantity )
     end
   end
 end
