@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160504174710) do
+ActiveRecord::Schema.define(version: 20160510145028) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20160504174710) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "quantity"
+    t.datetime "user_date"
   end
 
   add_index "sales", ["contact_id"], name: "index_sales_on_contact_id"

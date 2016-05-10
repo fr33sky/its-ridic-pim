@@ -7,7 +7,7 @@ class Order < ActiveRecord::Base
   private
 
   def set_user_date
-    if user_date.nil?
+    if user_date.blank?
       self.update_column(:user_date, self.created_at)
     end
   end

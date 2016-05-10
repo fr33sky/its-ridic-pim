@@ -149,8 +149,6 @@ describe "Average Cost" do
       @order_item2 = FactoryGirl.create(:order_item, order: @order2, product: @product, quantity: 200, cost: 250.00)
     end
 
-    #expect(@order_item2.average_cost).to eq(1.583333)
-
     travel_to(1.days.ago) do
       @order3 = FactoryGirl.create(:order)
       @order_item3 = FactoryGirl.create(:order_item, order: @order3, product: @product, quantity: 1500, cost: 200.00)
