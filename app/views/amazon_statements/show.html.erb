@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Period:</strong>
+  <%= @amazon_statement.period %>
+</p>
+
+<p>
+  <strong>Deposit total:</strong>
+  <%= @amazon_statement.deposit_total %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @amazon_statement.status %>
+</p>
+
+<p>
+  <strong>Settlement:</strong>
+  <%= @amazon_statement.settlement_id %>
+</p>
+
+<p>
+  <strong>Summary:</strong>
+  <%= @amazon_statement.summary %>
+</p>
+
+<%= link_to 'Edit', edit_amazon_statement_path(@amazon_statement) %> |
+<%= link_to 'Back', amazon_statements_path %>

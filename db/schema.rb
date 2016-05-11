@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510145028) do
+ActiveRecord::Schema.define(version: 20160511193426) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
@@ -30,6 +30,24 @@ ActiveRecord::Schema.define(version: 20160510145028) do
   add_index "adjustments", ["adjustment_type_id"], name: "index_adjustments_on_adjustment_type_id"
   add_index "adjustments", ["product_id"], name: "index_adjustments_on_product_id"
 
+  create_table "amazon_statements", force: :cascade do |t|
+    t.string   "period"
+    t.decimal  "deposit_total"
+    t.string   "status"
+    t.string   "settlement_id"
+    t.text     "summary"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  create_table "configurations", force: :cascade do |t|
+    t.string   "primary_marketplace_id"
+    t.string   "merchant_id"
+    t.string   "auth_token"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
   create_table "contacts", force: :cascade do |t|
     t.string   "name"
     t.string   "address"
@@ -39,6 +57,14 @@ ActiveRecord::Schema.define(version: 20160510145028) do
     t.string   "country"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "credentials", force: :cascade do |t|
+    t.string   "primary_marketplace_id"
+    t.string   "merchant_id"
+    t.string   "auth_token"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "order_items", force: :cascade do |t|
@@ -79,18 +105,27 @@ ActiveRecord::Schema.define(version: 20160510145028) do
   end
 
   create_table "sales", force: :cascade do |t|
-    t.integer  "product_id"
-    t.integer  "payment_id"
-    t.integer  "contact_id"
-    t.float    "sale_price"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.integer  "quantity"
-    t.datetime "user_date"
+    t.integer  "sales_receipt_id"
+    t.decimal  "amount"
+    t.decimal  "rate"
+    t.integer  "product_id"
   end
 
-  add_index "sales", ["contact_id"], name: "index_sales_on_contact_id"
-  add_index "sales", ["payment_id"], name: "index_sales_on_payment_id"
   add_index "sales", ["product_id"], name: "index_sales_on_product_id"
+  add_index "sales", ["sales_receipt_id"], name: "index_sales_on_sales_receipt_id"
+
+  create_table "sales_receipts", force: :cascade do |t|
+    t.integer  "contact_id"
+    t.integer  "payment_id"
+    t.datetime "user_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "sales_receipts", ["contact_id"], name: "index_sales_receipts_on_contact_id"
+  add_index "sales_receipts", ["payment_id"], name: "index_sales_receipts_on_payment_id"
 
 end

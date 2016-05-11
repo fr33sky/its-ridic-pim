@@ -1,0 +1,37 @@
+<%= simple_form_for(@sales_receipt, html: { class: "form-horizontal" }) do |f| %>
+  <%= f.error_notification %>
+  <%= link_to "Add Date", "#", id: "adduserdate" %>
+  <%= f.input :user_date, include_blank: true %>
+  <div class="form-group">
+    <%= f.association :contact %>
+  </div>
+  <div class="form-group">
+    <%= f.association :payment %>
+  </div>
+  <h3>Sale Items</h3>
+  <div id="sale-items">
+    <%= f.simple_fields_for :sales do |sale| %>
+      <%= render 'sale_fields', :f => sale %>
+    <% end %>
+    <div class="links" style="margin-top: 1%; margin-bottom: 1%;">
+      <%= link_to_add_association 'add item', f, :sales, class: "btn btn-warning" %>
+    </div>
+  </div>
+  <%= f.submit "Submit", class: "btn btn-primary" %>
+<% end %>
+<script>
+$(document).ready(function() {
+  function toggleDate() {
+    $(".sales_receipt_user_date").toggle();
+    if ($("#adduserdate").text() == "Add Date") {
+      $("#adduserdate").text("Hide Date");
+    } else {
+      $("#adduserdate").text("Add Date");
+    }
+  }
+  $(".sales_receipt_user_date").hide();
+  var addUserDate = document.getElementById('adduserdate');
+  addUserDate.addEventListener('click', toggleDate, false);
+});
+</script>
+

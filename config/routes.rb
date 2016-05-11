@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :amazon_statements, only: [:index] do
+    get :fetch, :on => :collection
+  end
+
+  resources :sales_receipts
+  resources :credentials
   get 'inventory/index'
 
   resources :adjustments

@@ -16,10 +16,12 @@ gem 'bootstrap-sass', '~> 3.3.6'
 gem 'acts-as-taggable-on', '~> 3.4'
 gem 'rspec-rails'
 gem 'factory_girl_rails'
-gem 'timecop'
+gem 'peddler', '~> 1.3'
+gem 'font-awesome-rails', '~> 4.6', '>= 4.6.2.0'
 
 group :development, :test do
   gem 'byebug'
+  gem 'dotenv-rails'
 end
 
 group :development do

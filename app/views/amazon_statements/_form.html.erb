@@ -1,0 +1,15 @@
+<%= simple_form_for(@amazon_statement) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :period %>
+    <%= f.input :deposit_total %>
+    <%= f.input :status %>
+    <%= f.input :settlement_id %>
+    <%= f.input :summary %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

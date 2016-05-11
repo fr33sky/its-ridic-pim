@@ -1,0 +1,40 @@
+<table class="table statements">
+  <thead>
+    <th>Settlement ID</th>
+    <th>Period</th>
+    <th>Deposit Total</th>
+    <th>Status</th>
+  </thead>
+  <tbody>
+    <% @amazon_statements.each do |as| %>
+      <tr>
+        <td><span class="label label-default"><%= as.settlement_id %></span></td>
+        <td><%= fa_icon("calendar") %> <%= as.period %></td>
+        <td><%= number_to_currency(as.deposit_total) %></td>
+        <td><span class="label label-info"><%= as.status %></span></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Fetch", fetch_amazon_statements_path, remote: true, class: "btn btn-success btn-sm" %>
+<div class="spinner">
+  <i class="fa fa-refresh fa-spin" aria-hidden="true"></i>
+  <small>Retrieving data from Amazon, please wait...</small>
+</div>
+
+<script>
+$( document ).ready(function() {
+  $(".spinner").hide();
+
+  $(document).ajaxStart(function(){
+    $(".spinner").show();
+  });
+
+  $(document).ajaxStop(function(){
+    $(".spinner").hide();
+    location.reload();
+  });
+});
+</script>
+

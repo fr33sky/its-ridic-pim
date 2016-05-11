@@ -15,19 +15,3 @@
     <%= f.button :submit %>
   </div>
 <% end %>
-<script>
-$(document).ready(function() {
-  function toggleDate() {
-    $(".sale_user_date").toggle();
-    if ($("#adduserdate").text() == "Add Date") {
-      $("#adduserdate").text("Hide Date");
-    } else {
-      $("#adduserdate").text("Add Date");
-    }
-  }
-  $(".sale_user_date").hide();
-  var addUserDate = document.getElementById('adduserdate');
-  addUserDate.addEventListener('click', toggleDate, false);
-});
-</script>
-
