@@ -5,6 +5,10 @@ class SalesReceipt < ActiveRecord::Base
   accepts_nested_attributes_for :sales, reject_if: :all_blank, allow_destroy: true
   after_save :set_user_date
 
+  def total
+    self.sales.sum(:amount)
+  end
+
   private
 
   def set_user_date

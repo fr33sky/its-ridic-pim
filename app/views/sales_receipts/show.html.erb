@@ -1,0 +1,38 @@
+<h1>Sales Receipt</h1>
+<h2>Customer: <%= link_to @sales_receipt.contact.name, contact_path(@sales_receipt.contact) %></h2>
+<h2>Date: <%= @sales_receipt.user_date.strftime("%m/%d/%Y") %></h2>
+<h3>Payment: <%= @sales_receipt.payment.name %></h3>
+
+<h3>Items</h3>
+
+<table class="table">
+  <thead>
+    <th>Product</th>
+    <th>Quantity</th>
+    <th>Amount</th>
+    <th>Rate</th>
+  </thead>
+  <tbody>
+    <% @sales_receipt.sales.each do |sale| %>
+    <tr>
+      <td><%= sale.product.name %></td>
+      <td><%= sale.quantity %></td>
+      <td><%= number_to_currency(sale.amount) %></td>
+      <td><%= number_to_currency(sale.rate) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+
+<p>
+  Total: <%= number_to_currency(@sales_receipt.total) %>
+</p>
+
+<%= link_to "Edit Sales Receipt", edit_sales_receipt_path(@sales_receipt), class: "btn btn-success" %>
+<%= link_to "Delete Sales Receipt", sales_receipt_path(@sales_receipt), method: :delete, data: { confirm: "Are you sure?" },
+  class: "btn btn-danger" %>
+
+<p>
+<%= link_to "All Sales Receipts", sales_receipts_path, class: "btn btn-primary" %>
+</p>
