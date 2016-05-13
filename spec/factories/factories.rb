@@ -29,11 +29,15 @@ FactoryGirl.define do
     cost 500.00
   end
 
-  factory :sale do
-    product
-    payment
+  factory :sales_receipt do
     contact
+    payment
+  end
+
+  factory :sale do
+    sales_receipt
+    product
     quantity 300
-    sale_price 3000
+    amount 3000
   end
 end

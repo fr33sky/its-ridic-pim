@@ -11,7 +11,7 @@ class OrderItem < ActiveRecord::Base
   def last_quantity(oi=self)
     # Anything ordered, sold, and adjusted prior to this order
     ordered  = OrderItem.joins(:order).where("product_id = ? AND user_date < ?", oi.product_id, oi.order.user_date).sum(:quantity)
-    sold     = Sale.where("product_id = ? AND user_date < ?", oi.product_id, oi.order.user_date).sum(:quantity)
+    sold     = SalesReceipt.joins(:sales).where("product_id = ? AND user_date < ?", oi.product_id, oi.order.user_date).sum(:quantity)
     adjusted = Adjustment.where("product_id = ? AND created_at < ?", oi.product_id, oi.order.user_date).sum(:adjusted_quantity)
     ordered - sold + adjusted
   end

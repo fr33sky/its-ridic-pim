@@ -1,7 +1,6 @@
 class Sale < ActiveRecord::Base
   belongs_to :product
-  belongs_to :payment
-  belongs_to :contact
+  belongs_to :sales_receipt
   after_save :set_rate
 
   private
