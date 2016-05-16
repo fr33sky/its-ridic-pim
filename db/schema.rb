@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160511193426) do
+ActiveRecord::Schema.define(version: 20160516200616) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 20160511193426) do
     t.decimal  "amount"
     t.decimal  "rate"
     t.integer  "product_id"
+    t.string   "description"
   end
 
   add_index "sales", ["product_id"], name: "index_sales_on_product_id"

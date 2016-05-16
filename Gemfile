@@ -20,7 +20,6 @@ gem 'peddler', '~> 1.3'
 gem 'font-awesome-rails', '~> 4.6', '>= 4.6.2.0'
 gem 'command_line_reporter'
 gem 'jsonpath'
-gem 'quickbooks-ruby', github: 'ruckus/quickbooks-ruby'
 
 group :development, :test do
   gem 'byebug'

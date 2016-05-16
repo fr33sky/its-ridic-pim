@@ -1,14 +1,3 @@
-GIT
-  remote: git://github.com/ruckus/quickbooks-ruby.git
-  revision: 8770f0c292abf4f8e0e29582a606799049e7b3ce
-  specs:
-    quickbooks-ruby (0.4.3)
-      activemodel
-      multipart-post
-      nokogiri
-      oauth (= 0.4.7)
-      roxml (= 3.3.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -121,10 +110,8 @@ GEM
     minitest (5.8.4)
     multi_json (1.11.2)
     multi_xml (0.5.5)
-    multipart-post (2.0.0)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
-    oauth (0.4.7)
     peddler (1.3.0)
       jeff (~> 1.3)
       multi_xml (~> 0.5.0)
@@ -158,9 +145,6 @@ GEM
     rake (11.1.2)
     rdoc (4.2.2)
       json (~> 1.4)
-    roxml (3.3.1)
-      activesupport (>= 2.3.0)
-      nokogiri (>= 1.3.3)
     rspec-core (3.4.4)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
@@ -236,7 +220,6 @@ DEPENDENCIES
   jquery-rails
   jsonpath
   peddler (~> 1.3)
-  quickbooks-ruby!
   rails (= 4.2.6)
   rspec-rails
   sass-rails (~> 5.0)

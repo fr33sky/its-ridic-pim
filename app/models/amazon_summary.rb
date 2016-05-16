@@ -100,7 +100,7 @@ class AmazonSummary
     prices.uniq
   end
 
-  # Determines of a particular SKU was sold at multiple prices
+  # Determines if a particular SKU was sold at multiple prices
   # * *Args* :
   #   - +sku+ - The SKU being used to determine if it was sold at multiple prices
   # * *Returns* :
@@ -356,7 +356,7 @@ class AmazonSummary
     JsonPath.on(@summary_as_array, "$..Fee[?(@.Type=='RefundCommission')]..Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)
   end
-  
+
   def refund_commission_refund
     JsonPath.on(@summary_as_array, "$..ItemFeeAdjustments..Fee[?(@.Type=='Commission')]..Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)
@@ -365,35 +365,35 @@ class AmazonSummary
   def refund_commission_total
     (refund_commission + refund_commission_refund).round(2)
   end
-  
+
   # Returns the sum of the FBAPerOrderFulfillmentFee marked as an expense
   # * *Returns* :
   #   - A sum of the expenses marked as FBAPerOrderFulfillmentFee
   def fba_per_order_fulfillment_fee
     json_path_expense('FBAPerOrderFulfillmentFee')
   end
-  
+
   # Returns the sum of the FBAPerUnitFulfillmentFee marked as an expense
   # * *Returns* :
   #   - A sum of the expenses marked as FBAPerUnitFulfillmentFee
   def fba_per_unit_fulfillment_fee
     json_path_expense('FBAPerUnitFulfillmentFee')
   end
-  
+
   # Returns the sum of the FBAWeightBasedFee marked as an expense
   # * *Returns* :
   #   - A sum of the expenses marked as FBAWeightBasedFee
   def fba_weight_based_fee
     json_path_expense('FBAWeightBasedFee')
   end
-  
+
   # Returns the sum of the SalesTaxServiceFee marked as an expense
   # * *Returns* :
   #   - A sum of the expenses marked as SalesTaxServiceFee
   def sales_tax_service_fee
     json_path_expense('SalesTaxServiceFee')
   end
-  
+
   # Returns a sum of the Fee Type 'Inbound Transportation Fee'
   # * *Returns* :
   #   - A sum of all fees with type 'Inbound Transportation Fee'
@@ -408,7 +408,7 @@ class AmazonSummary
   def shipping_chargeback
     json_path_expense('ShippingChargeback')
   end
-  
+
   # Returns the ShippingChargebackRefund
   # * *Returns* :
   #   - A sum of the ShippingChargebackRefund
@@ -416,7 +416,7 @@ class AmazonSummary
     JsonPath.on(@summary_as_array, "$..AdjustedItem..ItemFeeAdjustments..Fee[?(@.Type=='ShippingChargeback')]..Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)
   end
-  
+
   # Returns the fee type 'FBA Customer Return Per Order Fee'
   # * *Returns* :
   #   - A sum of the fee type 'FBA Customer Return Per Order Fee'
@@ -424,7 +424,7 @@ class AmazonSummary
     JsonPath.on(@summary_as_array, "$..Fees..Fee[?(@.Type=='FBA Customer Return Per Order Fee')]..Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)
   end
-  
+
   # Returns the fee type 'FBA Customer Return Per Unit Fee'
   # * *Returns* :
   #   - A sum of the fee type 'FBA Customer Returns Per Unit Fee'
@@ -432,7 +432,7 @@ class AmazonSummary
     JsonPath.on(@summary_as_array, "$..Fees..Fee[?(@.Type=='FBA Customer Return Per Unit Fee')]..Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)    
   end
-  
+
   # Returns the fee type 'FBA Customer Return Weight Based Fee'
   # * *Returns* :
   #   - A sum of the fee type 'FBA Customer Return Weight Based Fee'
@@ -440,7 +440,7 @@ class AmazonSummary
     JsonPath.on(@summary_as_array, "$..Fees..Fee[?(@.Type=='FBA Customer Return Weight Based Fee')]..Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)    
   end
-  
+
   # Returns the GiftwrapChargeback
   # * *Returns* :
   #   - A sum of expense GiftwrapChargeback
@@ -477,18 +477,31 @@ class AmazonSummary
     JsonPath.on(@summary_as_array, "$..[?(@.TransactionType=='DisposalComplete')].Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)
   end
-  
+
   def reversal_reimbursement
     JsonPath.on(@summary_as_array, "$..[?(@.TransactionType=='REVERSAL_REIMBURSEMENT')].Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)
   end
-  
+
   def cs_error_items
     JsonPath.on(@summary_as_array, "$..[?(@.TransactionType=='CS_ERROR_ITEMS')].Amount..__content__")
       .map(&:to_f).inject(:+).to_f.round(2)
   end
 
   def create_sales_receipt
+    # Find / create customer
+    amazon_customer = Contact.find_by(name: "Amazon")
+    if amazon_customer.nil?
+      amazon_customer = Contact.create!(name: "Amazon", address: "410 Terry Ave. North", city: "Seattle", state: "Washington", postal_code: "98109-5210", country: "US")
+    end
+    # Find / create payment
+    payment_method = Payment.find_by(name: "AMAZON")
+    if payment_method.nil?
+      payment_method = Payment.create!(name: "AMAZON")
+    end
+    # Create Sales Receipt
+    receipt = SalesReceipt.create!(contact_id: amazon_customer.id, payment_id: payment_method.id)
+
     sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap]
     descriptions = {
       "3U-6S08-R6CZ"     => "It's Ridic! Warm touchscreen / texting winter gloves - Black",
@@ -507,8 +520,86 @@ class AmazonSummary
       "YogaSock-Pink"    => "IT'S RIDIC! Women 100% Pure Cotton Yoga Sock Pink",
       "YogaSock-Purple"  => "IT'S RIDIC! Women 100% Pure Cotton Yoga Sock Purple"
     }
+    self.skus.sort.each do |sku|
+      # Find / create Product
+      product = Product.find_by(name: descriptions[sku] ||= sku)
+
+      if product.nil?
+        product = Product.create!(name: descriptions[sku] ||= sku, upc: sku, price: median_order_price(sku))
+      end
+
+      if has_multiple_prices?(sku)
+        prices = unique_prices(sku)
+        prices.each do |price|
+          order_qty = self.order_quantity_by_price(sku, price)
+          order_amt = self.order_amount_by_price(sku, price)
+          order_rate = (order_amt / order_qty).to_f.round(2) if order_qty != 0
+          refund_amt  = self.refund_amount(sku)
+          refund_rate = median_order_price(sku)
+          refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
+          disc_amt    = self.promotion_amount(sku)
+          disc_rate   = self.promotion_rate(sku)
+          disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
+          description = descriptions[sku] ||= sku
+          if order_qty != 0
+            receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
+          end
+          if refund_qty != 0
+            receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
+          end
+          if disc_rate != 0
+            receipt.sales.create!(description: "DISCOUNT - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
+          end
+        end
+        else
+          order_qty   = self.order_quantity(sku)
+          order_amt   = self.order_amount(sku)
+          order_rate  = (order_amt / order_qty).to_f.round(2) if order_qty != 0
+          refund_amt  = self.refund_amount(sku)
+          refund_rate = median_order_price(sku)
+          refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
+          disc_amt    = self.promotion_amount(sku)
+          disc_rate   = self.promotion_rate(sku)
+          disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
+          description = descriptions[sku] ||= sku
+          goodwillamt = self.goodwill(sku)
+          mfi_amt     = self.missing_from_inbound_amount(sku)
+          mfi_qty     = self.missing_from_inbound_quantity(sku)
+        mfi_rate    = (mfi_amt / mfi_qty).to_f.round(2) if mfi_qty != 0
+        if order_qty != 0
+          receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
+        end       
+        if refund_qty != 0
+          receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
+        end
+        if disc_rate != 0
+          receipt.sales.create!(description: "DISCOUNT - #{description}", quantity: disc_qty.to_i, amount: disc_amt.to_f, rate: disc_rate.to_f, product: product)
+        end
+        if goodwillamt != 0
+          receipt.sales.create!(description: "Goodwill - #{description}", quantity: 1, amount: goodwillamt.to_f, rate: goodwillamt.to_f, product: product)
+        end
+        if mfi_qty != 0
+          receipt.sales.create!(description: "MISSING_FROM_INBOUND - #{description}", quantity: mfi_qty.to_i, amount: mfi_amt.to_f, rate: mfi_rate.to_f, product: product)
+        end
+      end
+    end
+    sales_receipt_methods.each do |m|
+      prod = case m.to_s
+             when "total_tax" then "Sales Tax"
+             when "shipping_total" then "Shipping"
+             when "total_promotion_shipping" then "PromotionShipping"
+             when "shipping_sales_tax" then "ShippingSalesTax"
+             when "gift_wrap" then "FBAGiftWrap"
+             else m.to_s
+             end
+      amount = self.send(m)
+      qty = 1
+      qty = -1 if prod == "PromotionShipping"
+      rate = amount * qty
+      receipt.sales.create!(description: prod, quantity: qty , amount: amount, rate: rate)
+    end        
   end
-  
+
   def sales_receipt_report
     puts "Report is loading please wait..."
     sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap]
@@ -653,11 +744,11 @@ class AmazonSummary
       end
       sales_receipt_methods.each do |m|
         product = case m.to_s
-                    when "total_tax" then "Sales Tax"
-                    when "shipping_total" then "Shipping"
-                    when "total_promotion_shipping" then "PromotionShipping"
-                    when "shipping_sales_tax" then "ShippingSalesTax"
-                    when "gift_wrap" then "FBAGiftWrap"
+                  when "total_tax" then "Sales Tax"
+                  when "shipping_total" then "Shipping"
+                  when "total_promotion_shipping" then "PromotionShipping"
+                  when "shipping_sales_tax" then "ShippingSalesTax"
+                  when "gift_wrap" then "FBAGiftWrap"
                   else m.to_s
                   end
         amount = self.send(m)
@@ -678,14 +769,14 @@ class AmazonSummary
 
   def expense_report(description)
     expense_methods = [:amazon_commission, :refund_commission_total, 
-                      :fba_per_order_fulfillment_fee, :fba_per_unit_fulfillment_fee, 
-                      :fba_weight_based_fee, :sales_tax_service_fee, :inbound_transportation_fee,
-                      :payable_to_amazon, :storage_fees, :shipping_chargeback, 
-                      :shipping_chargeback_refund, :warehouse_damage, 
-                      :warehouse_damage_exception, :warehouse_lost_manual,
-                      :fba_customer_return_per_order_fee, :fba_customer_return_per_unit_fee, 
-                      :fba_customer_return_weight_based_fee, :gift_wrap_charge_back,
-					  :disposal_fee, :reversal_reimbursement, :cs_error_items]
+                       :fba_per_order_fulfillment_fee, :fba_per_unit_fulfillment_fee, 
+                       :fba_weight_based_fee, :sales_tax_service_fee, :inbound_transportation_fee,
+                       :payable_to_amazon, :storage_fees, :shipping_chargeback, 
+                       :shipping_chargeback_refund, :warehouse_damage, 
+                       :warehouse_damage_exception, :warehouse_lost_manual,
+                       :fba_customer_return_per_order_fee, :fba_customer_return_per_unit_fee, 
+                       :fba_customer_return_weight_based_fee, :gift_wrap_charge_back,
+                       :disposal_fee, :reversal_reimbursement, :cs_error_items]
     table :border => true do
       row :color => 'red' do
         column '#', :width => 2
@@ -703,7 +794,7 @@ class AmazonSummary
                   when "WarehouseDamage" then "DamagedInventory"
                   when "GiftWrapChargeBack" then "FBAGiftWrapchargeback"
                   else method.to_s.camelcase.gsub('Fba', 'FBA')
-        end
+                  end
         row :color => 'green', :bold => true do
           column index + 1
           column account
@@ -715,51 +806,51 @@ class AmazonSummary
   end
 
   private
-    # Helper Methods
-    def json_path(string, float = true)
-      if float
-        JsonPath.on(@summary_as_array, string).map(&:to_f).inject(:+).to_f.round(2)
-      else
-        JsonPath.on(@summary_as_array, string).map(&:to_i).inject(:+).to_f.round(2)
-      end
+  # Helper Methods
+  def json_path(string, float = true)
+    if float
+      JsonPath.on(@summary_as_array, string).map(&:to_f).inject(:+).to_f.round(2)
+    else
+      JsonPath.on(@summary_as_array, string).map(&:to_i).inject(:+).to_f.round(2)
     end
+  end
 
-    def json_path_expense(string)
-      json_path("$..ItemFees..Fee[?(@.Type=='#{string}')]..Amount..__content__")
+  def json_path_expense(string)
+    json_path("$..ItemFees..Fee[?(@.Type=='#{string}')]..Amount..__content__")
+  end
+
+  # Returns the most common element in an Array
+  def most_common_value(a)
+    if a.empty?
+      return 0
     end
-
-    # Returns the most common element in an Array
-    def most_common_value(a)
-      if a.empty?
-        return 0
-      end
-      if a.class == Array
-        a.group_by do |e|
-          e
-        end.values.max_by(&:size).first
-      elsif a.class == String
-        a = JsonPath.on(@summary_as_array, '$..ItemPriceAdjustments..Component[?(@.Type=="Tax")]..Amount..__content__').map(&:to_f)
-        most_common_value(a)
-      end
+    if a.class == Array
+      a.group_by do |e|
+        e
+      end.values.max_by(&:size).first
+    elsif a.class == String
+      a = JsonPath.on(@summary_as_array, '$..ItemPriceAdjustments..Component[?(@.Type=="Tax")]..Amount..__content__').map(&:to_f)
+      most_common_value(a)
     end
+  end
 
-    def print_line(char = "-")
-      puts char * 40
-    end
+  def print_line(char = "-")
+    puts char * 40
+  end
 
-    def process_hash(hash)
-      hash.each do |k,v|
-        if v.class == Hash
-          hash[k] = [] << process_hash(v)
-        elsif v.class == Array
-          v.each do |v2|
-            if v2.class == Hash
-              v2 = [] << process_hash(v2)
-            end
+  def process_hash(hash)
+    hash.each do |k,v|
+      if v.class == Hash
+        hash[k] = [] << process_hash(v)
+      elsif v.class == Array
+        v.each do |v2|
+          if v2.class == Hash
+            v2 = [] << process_hash(v2)
           end
         end
       end
-     end
+    end
+  end
 end
 
 
