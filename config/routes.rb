@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :amazon_statements, only: [:index] do
+  resources :amazon_statements, only: [:index, :show] do
     get :fetch, :on => :collection
   end
 

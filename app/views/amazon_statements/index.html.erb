@@ -11,7 +11,7 @@
         <td><span class="label label-default"><%= as.settlement_id %></span></td>
         <td><%= fa_icon("calendar") %> <%= as.period %></td>
         <td><%= number_to_currency(as.deposit_total) %></td>
-        <td><span class="label label-info"><%= as.status %></span></td>
+        <td><%= link_to as.status, amazon_statement_path(as) %></td>
       </tr>
     <% end %>
   </tbody>

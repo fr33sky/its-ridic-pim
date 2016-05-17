@@ -597,7 +597,8 @@ class AmazonSummary
       qty = -1 if prod == "PromotionShipping"
       rate = amount * qty
       receipt.sales.create!(description: prod, quantity: qty , amount: amount, rate: rate)
-    end        
+    end
+    return receipt
   end
 
   def sales_receipt_report

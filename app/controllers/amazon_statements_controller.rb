@@ -21,7 +21,13 @@ class AmazonStatementsController < ApplicationController
     redirect_to amazon_statements_path
   end
 
-  private
+  def show
+    @amazon_statement = AmazonStatement.find(params[:id])
+    receipt = AmazonSummary.new(@amazon_statement.report_id.to_i).create_sales_receipt
+    @amazon_statement.status = "PROCESSED"
+    @amazon_statement.save
+    redirect_to sales_receipt_path(receipt)
+  end
 
   def set_client
     MWS::Reports::Client.new(
@@ -41,21 +47,21 @@ class AmazonStatementsController < ApplicationController
 			if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
 				report_id = report['ReportId']
 				item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
-				add_statement_to_db(item_to_add)
+				add_statement_to_db(item_to_add, report_id)
 			else
 				next
 			end
 		end
 	end
 
-	def add_statement_to_db(item_to_add)
+	def add_statement_to_db(item_to_add, report_id)
 		if AmazonStatement.where(settlement_id: item_to_add['SettlementData']['AmazonSettlementID']).blank?
 			period = item_to_add['SettlementData']['StartDate'].gsub(/T.+/, '') + ' - ' + item_to_add['SettlementData']['EndDate'].gsub(/T.+/, '')
 			deposit_total = item_to_add['SettlementData']['TotalAmount']['__content__']
 			status = 'NOT_PROCESSED'
 			summary = item_to_add.to_s
 			settlement_id = item_to_add['SettlementData']['AmazonSettlementID']
-			AmazonStatement.create!(period: period, deposit_total: deposit_total, status: status, summary: summary, settlement_id: settlement_id)
+			AmazonStatement.create!(period: period, deposit_total: deposit_total, status: status, summary: summary, settlement_id: settlement_id, report_id: report_id)
 		end
 	end
 
