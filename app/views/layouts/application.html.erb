@@ -8,8 +8,17 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+	<% unless session[:token] %>
+		<ipp:connectToIntuit></ipp:connectToIntuit>
+	<% end %>
+	<script type="text/javascript" src="https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere.js"></script>
+
+	<script>
+intuit.ipp.anywhere.setup({menuProxy: '/path/to/blue-dot', grantUrl: '<%= authenticate_amazon_statements_url %>'});
+	</script>
+
 	<div class="container">
-    <%= render 'layouts/header' %>
+		<%= render 'layouts/header' %>
 		<%= flash_messages %>
 		<%= yield %>
 	</div>

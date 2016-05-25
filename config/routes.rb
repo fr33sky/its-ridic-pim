@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   resources :amazon_statements, only: [:index, :show] do
     get :fetch, :on => :collection
+    collection do
+      get :authenticate
+      get :oauth_callback
+    end
   end
 
   resources :sales_receipts

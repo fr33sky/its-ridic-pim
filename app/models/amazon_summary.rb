@@ -521,36 +521,37 @@ class AmazonSummary
       "YogaSock-Purple"  => "IT'S RIDIC! Women 100% Pure Cotton Yoga Sock Purple"
     }
     self.skus.sort.each do |sku|
-      # Find / create Product
-      product = Product.find_by(name: descriptions[sku] ||= sku)
+      Sale.transaction do
+        # Find / create Product
+        product = Product.find_by(name: descriptions[sku] ||= sku)
 
-      if product.nil?
-        product = Product.create!(name: descriptions[sku] ||= sku, upc: sku, price: median_order_price(sku))
-      end
-
-      if has_multiple_prices?(sku)
-        prices = unique_prices(sku)
-        prices.each do |price|
-          order_qty = self.order_quantity_by_price(sku, price)
-          order_amt = self.order_amount_by_price(sku, price)
-          order_rate = (order_amt / order_qty).to_f.round(2) if order_qty != 0
-          refund_amt  = self.refund_amount(sku)
-          refund_rate = median_order_price(sku)
-          refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
-          disc_amt    = self.promotion_amount(sku)
-          disc_rate   = self.promotion_rate(sku)
-          disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
-          description = descriptions[sku] ||= sku
-          if order_qty != 0
-            receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
-          end
-          if refund_qty != 0
-            receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
-          end
-          if disc_rate != 0
-            receipt.sales.create!(description: "DISCOUNT - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
-          end
+        if product.nil?
+          product = Product.create!(name: descriptions[sku] ||= sku, upc: sku, price: median_order_price(sku))
         end
+
+        if has_multiple_prices?(sku)
+          prices = unique_prices(sku)
+          prices.each do |price|
+            order_qty = self.order_quantity_by_price(sku, price)
+            order_amt = self.order_amount_by_price(sku, price)
+            order_rate = (order_amt / order_qty).to_f.round(2) if order_qty != 0
+            refund_amt  = self.refund_amount(sku)
+            refund_rate = median_order_price(sku)
+            refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
+            disc_amt    = self.promotion_amount(sku)
+            disc_rate   = self.promotion_rate(sku)
+            disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
+            description = descriptions[sku] ||= sku
+            if order_qty != 0
+              receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
+            end
+            if refund_qty != 0
+              receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
+            end
+            if disc_rate != 0
+              receipt.sales.create!(description: "DISCOUNT - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
+            end
+          end
         else
           order_qty   = self.order_quantity(sku)
           order_amt   = self.order_amount(sku)
@@ -565,21 +566,22 @@ class AmazonSummary
           goodwillamt = self.goodwill(sku)
           mfi_amt     = self.missing_from_inbound_amount(sku)
           mfi_qty     = self.missing_from_inbound_quantity(sku)
-        mfi_rate    = (mfi_amt / mfi_qty).to_f.round(2) if mfi_qty != 0
-        if order_qty != 0
-          receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
-        end       
-        if refund_qty != 0
-          receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
-        end
-        if disc_rate != 0
-          receipt.sales.create!(description: "DISCOUNT - #{description}", quantity: disc_qty.to_i, amount: disc_amt.to_f, rate: disc_rate.to_f, product: product)
-        end
-        if goodwillamt != 0
-          receipt.sales.create!(description: "Goodwill - #{description}", quantity: 1, amount: goodwillamt.to_f, rate: goodwillamt.to_f, product: product)
-        end
-        if mfi_qty != 0
-          receipt.sales.create!(description: "MISSING_FROM_INBOUND - #{description}", quantity: mfi_qty.to_i, amount: mfi_amt.to_f, rate: mfi_rate.to_f, product: product)
+          mfi_rate    = (mfi_amt / mfi_qty).to_f.round(2) if mfi_qty != 0
+          if order_qty != 0
+            receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
+          end       
+          if refund_qty != 0
+            receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
+          end
+          if disc_rate != 0
+            receipt.sales.create!(description: "DISCOUNT - #{description}", quantity: disc_qty.to_i, amount: disc_amt.to_f, rate: disc_rate.to_f, product: product)
+          end
+          if goodwillamt != 0
+            receipt.sales.create!(description: "Goodwill - #{description}", quantity: 1, amount: goodwillamt.to_f, rate: goodwillamt.to_f, product: product)
+          end
+          if mfi_qty != 0
+            receipt.sales.create!(description: "MISSING_FROM_INBOUND - #{description}", quantity: mfi_qty.to_i, amount: mfi_amt.to_f, rate: mfi_rate.to_f, product: product)
+          end
         end
       end
     end

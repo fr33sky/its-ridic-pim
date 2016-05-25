@@ -11,7 +11,11 @@
         <td><span class="label label-default"><%= as.settlement_id %></span></td>
         <td><%= fa_icon("calendar") %> <%= as.period %></td>
         <td><%= number_to_currency(as.deposit_total) %></td>
-        <td><%= link_to as.status, amazon_statement_path(as) %></td>
+        <% if as.status == "NOT_PROCESSED" %>
+          <td><%= link_to as.status, amazon_statement_path(as) %></td>
+        <% else %>
+          <td>PROCESSED</td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
