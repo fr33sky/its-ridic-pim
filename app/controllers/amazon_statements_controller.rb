@@ -87,9 +87,7 @@ class AmazonStatementsController < ApplicationController
 
   def oauth_callback
     at = Marshal.load(session[:qb_request_token]).get_access_token(:oauth_verifier => params[:oauth_verifier])
-    session[:token] = at.token
-    session[:secret] = at.secret
-    session[:realm_id] = params['realmId']
+    QboConfig.create(token: at.token, secret: at.secret, realm_id: params['realmId'])
     flash.notice = "Your QuickBooks account has been successfully linked."
     @msg = 'Redirecting. Please wait.'
     @url = amazon_statements_path
@@ -99,10 +97,7 @@ class AmazonStatementsController < ApplicationController
   private
 
   def set_qb_service
-    oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, session[:token], session[:secret])
-    # @sales_receipt = Quickeebooks::Online::Service::SalesReceipt.new
-    # @sales_receipt.access_token = oauth_client
-    # @sales_receipt.realm_id = session[:realm_id]
+    oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
   end
 
 end

@@ -8,7 +8,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-	<% unless session[:token] %>
+  <% unless QboConfig.exists? %>
 		<ipp:connectToIntuit></ipp:connectToIntuit>
 	<% end %>
 	<script type="text/javascript" src="https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere.js"></script>

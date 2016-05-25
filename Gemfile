@@ -21,6 +21,7 @@ gem 'font-awesome-rails', '~> 4.6', '>= 4.6.2.0'
 gem 'command_line_reporter'
 gem 'jsonpath'
 gem 'oauth-plugin'
+gem 'qbo_api'
 
 group :development, :test do
   gem 'byebug'
