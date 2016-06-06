@@ -19,9 +19,9 @@ gem 'factory_girl_rails'
 gem 'peddler', '~> 1.3'
 gem 'font-awesome-rails', '~> 4.6', '>= 4.6.2.0'
 gem 'command_line_reporter'
-gem 'jsonpath'
-gem 'oauth-plugin'
-gem 'qbo_api'
+gem 'jsonpath', '~> 0.5.8'
+gem 'oauth-plugin', '~> 0.5.1'
+gem 'quickbooks-ruby', '~> 0.4.3'
 
 group :development, :test do
   gem 'byebug'

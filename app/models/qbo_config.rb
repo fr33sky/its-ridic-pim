@@ -14,4 +14,16 @@ class QboConfig < ActiveRecord::Base
       QboConfig.first.update!(token: token, secret: secret, realm_id: realm_id)
     end
   end
+
+  def self.token
+    QboConfig.first.token
+  end
+
+  def self.secret
+    QboConfig.first.secret
+  end
+
+  def self.realm_id
+    QboConfig.first.realm_id
+  end
 end
