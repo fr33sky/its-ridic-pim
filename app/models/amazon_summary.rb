@@ -284,6 +284,14 @@ class AmazonSummary
       .map(&:to_f).inject(:+).to_f.round(2)
   end
 
+  # The "GiftWrap" total
+  # * *Returns* :
+  #   - The total of "GiftWrap"
+  def gift_wrap_tax
+    JsonPath.on(@summary_as_array, "$..ItemPrice..Component[?(@.Type=='GiftWrapTax')]..Amount..__content__")
+      .map(&:to_f).inject(:+).to_f.round(2)
+  end
+
   # The "ShippingTax" total (amount-type = ItemPrice and amount-description = ShippingTax)
   # * *Returns* :
   #   - The total ShippingTax
@@ -590,10 +598,12 @@ class AmazonSummary
              when "total_tax" then "Sales Tax"
              when "shipping_total" then "Shipping"
              when "total_promotion_shipping" then "PromotionShipping"
-             when "shipping_sales_tax" then "ShippingSalesTax"
+             when "shipping_tax" then "ShippingSalesTax"
              when "gift_wrap" then "FBAGiftWrap"
+             when "gift_wrap_tax" then "GiftWrapTax"
              else m.to_s
              end
+      puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> prod: #{prod}"
       amount = self.send(m)
       qty = 1
       qty = -1 if prod == "PromotionShipping"
@@ -605,7 +615,7 @@ class AmazonSummary
 
   def sales_receipt_report
     puts "Report is loading please wait..."
-    sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap]
+    sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax]
     descriptions = {
       "3U-6S08-R6CZ"     => "It's Ridic! Warm touchscreen / texting winter gloves - Black",
       "8A-OK9F-9LI8"     => "It's Ridic! Warm touchscreen / texting winter gloves - White",

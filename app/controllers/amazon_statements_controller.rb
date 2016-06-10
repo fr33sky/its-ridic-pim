@@ -22,14 +22,12 @@ class AmazonStatementsController < ApplicationController
   end
 
   def show
-    #@amazon_statement = AmazonStatement.find(params[:id])
-    #receipt = AmazonSummary.new(@amazon_statement.report_id.to_i).create_sales_receipt
-    #receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
+    @amazon_statement = AmazonStatement.find(params[:id])
+    receipt = AmazonSummary.new(@amazon_statement.report_id.to_i).create_sales_receipt
+    receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
     #@amazon_statement.status = "PROCESSED"
     #@amazon_statement.save
 
-    #REMOVE this when coming back...
-    receipt = SalesReceipt.last
     # First pass...loop through receipt and create products if they do not exist in QBO. e.g.:
     oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
     item_service = Quickbooks::Service::Item.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
@@ -79,8 +77,32 @@ class AmazonStatementsController < ApplicationController
           p e
           puts "**************** QBO ERROR *******************"
         end
-      elsif sale.description == 'Shipping'
-        # Create Shipping in QBO if it doesn't exist.
+      else
+        prod = sale.description.gsub(" ", "_").camelize
+        items = item_service.query("SELECT * FROM Item WHERE name = '#{prod}'")
+        puts "++++++++++++++++++++++++++++++++++++++++++++++++"
+        puts "SELECT * FROM Item WHERE name = '#{prod}'"
+        p items
+        puts "++++++++++++++++++++++++++++++++++++++++++++++++"
+        if items.entries.count == 0
+          # Create Item in QBO
+          item = Quickbooks::Model::Item.new
+          item.income_account_id = classify_income_account(prod)
+          item.type = "NonInventory"
+          item.name = prod
+          item.description = prod
+          item.unit_price = sale.rate
+          begin
+            created_item = item_service.create(item)
+          rescue Exception => e
+            puts "**************** QBO ERROR *******************"
+            p e
+            puts "**************** QBO ERROR *******************"
+          end
+        else
+          sale.qbo_id = items.entries[0].id
+          sale.save!
+        end
       end
     end
 
@@ -93,6 +115,11 @@ class AmazonStatementsController < ApplicationController
         puts "detail.unit_price = #{sale.rate.to_f}"
         puts "detail.quantity = #{sale.quantity}"
         puts "sale.amount = #{sale.amount}"
+        unless sale.quantity * sale.rate == line_item.amount
+          sale.amount = sale.quantity * sale.rate
+          sale.save!
+          line_item.amount = sale.quantity * sale.rate
+        end
         puts "quantity * rate == amount? #{sale.quantity * sale.rate == line_item.amount}"
         puts "()()()()()()()()()"
         detail.unit_price = sale.rate.to_f
@@ -100,12 +127,7 @@ class AmazonStatementsController < ApplicationController
         if sale.product.present?
           detail.item_id = sale.product.qbo_id
         else
-          # Find or create product?
-          puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-          items = item_service.query("SELECT * FROM Item WHERE name = '#{sale.description}'")
-          if items.entries.count > 0
-            detail.item_id = items.entries[0].id
-          end
+          detail.item_id = sale.qbo_id
         end
       end
       qbo_receipt.line_items << line_item
@@ -197,5 +219,32 @@ class AmazonStatementsController < ApplicationController
     @vendor_service = Quickbooks::Service::Vendor.new
     @vendor_service.access_token = oauth_client
     @vendor_service.company_id = QboConfig.realm_id
+  end
+
+  def classify_income_account(prod)
+    if prod == 'Shipping'
+      # Use "Shipping Income" account
+      91
+    elsif prod == 'SaleTax'
+      # Use "Sale Tax Payable" account
+      94
+    elsif prod == 'PromotionShipping'
+      # Use "Promo Rebates on Shipping" account
+      97
+    elsif prod == 'ShippingSalesTax'
+      # Use Sale Tax Payable:FBAShippingTax" account
+      95
+    elsif prod == 'FBAgiftwrap'
+      # Use "Services" account
+      1
+    elsif prod == 'BalanceAdjustment'
+      # Use "Gross Receipts" account
+      96
+    elsif prod == 'GiftWrapTax'
+      94
+    else
+      # Use "Service" account
+      1
+    end
   end
 end
