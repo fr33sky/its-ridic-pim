@@ -47,11 +47,6 @@ class AmazonStatementsController < ApplicationController
     # Loop through and create items if necessary in QBO
     receipt.sales.each do |sale|
       if !sale.product.nil?
-        puts "***********************"
-        p sale.product
-        puts "item.product.name = #{sale.product.name}"
-        puts "item.product.price = #{sale.product.price}"
-        puts "***********************"
         # Query QB to see if product exists.  If not, create it.
         items = item_service.query("SELECT * FROM Item WHERE sku = '#{sale.product.upc}'")
         p items
@@ -73,17 +68,13 @@ class AmazonStatementsController < ApplicationController
           sale.product.qbo_id = created_item.id
           sale.product.save
         rescue Exception => e
-          puts "**************** QBO ERROR *******************"
+          puts "**************** QBO ERROR 1 *******************"
           p e
-          puts "**************** QBO ERROR *******************"
+          puts "**************** QBO ERROR 1 *******************"
         end
       else
         prod = sale.description.gsub(" ", "_").camelize
         items = item_service.query("SELECT * FROM Item WHERE name = '#{prod}'")
-        puts "++++++++++++++++++++++++++++++++++++++++++++++++"
-        puts "SELECT * FROM Item WHERE name = '#{prod}'"
-        p items
-        puts "++++++++++++++++++++++++++++++++++++++++++++++++"
         if items.entries.count == 0
           # Create Item in QBO
           item = Quickbooks::Model::Item.new
@@ -95,9 +86,9 @@ class AmazonStatementsController < ApplicationController
           begin
             created_item = item_service.create(item)
           rescue Exception => e
-            puts "**************** QBO ERROR *******************"
+            puts "**************** QBO ERROR 2 *******************"
             p e
-            puts "**************** QBO ERROR *******************"
+            puts "**************** QBO ERROR 2 *******************"
           end
         else
           sale.qbo_id = items.entries[0].id
@@ -111,17 +102,11 @@ class AmazonStatementsController < ApplicationController
       line_item.amount = sale.amount.to_f
       line_item.description = sale.description
       line_item.sales_item! do |detail|
-        puts "()()()()()()()()()"
-        puts "detail.unit_price = #{sale.rate.to_f}"
-        puts "detail.quantity = #{sale.quantity}"
-        puts "sale.amount = #{sale.amount}"
         unless sale.quantity * sale.rate == line_item.amount
           sale.amount = sale.quantity * sale.rate
           sale.save!
           line_item.amount = sale.quantity * sale.rate
         end
-        puts "quantity * rate == amount? #{sale.quantity * sale.rate == line_item.amount}"
-        puts "()()()()()()()()()"
         detail.unit_price = sale.rate.to_f
         detail.quantity = sale.quantity
         if sale.product.present?
@@ -131,10 +116,6 @@ class AmazonStatementsController < ApplicationController
         end
       end
       qbo_receipt.line_items << line_item
-      puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-      p line_item
-      p line_item.valid?
-      puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
     end
 
     qbo_receipt.line_items.each do |li|

@@ -1,0 +1,9 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @expense_receipt.description %>
+</p>
+
+<%= link_to 'Edit', edit_expense_receipt_path(@expense_receipt) %> |
+<%= link_to 'Back', expense_receipts_path %>

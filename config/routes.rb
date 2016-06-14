@@ -1,4 +1,14 @@
 Rails.application.routes.draw do
+  resources :bank_accounts do
+    get :fetch, :on => :collection
+  end
+
+  resources :expense_accounts do
+    get :fetch, :on => :collection
+  end
+
+  resources :expenses
+  resources :expense_receipts
   resources :amazon_statements, only: [:index, :show] do
     get :fetch, :on => :collection
     collection do

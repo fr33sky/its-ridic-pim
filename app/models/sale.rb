@@ -7,7 +7,7 @@ class Sale < ActiveRecord::Base
 
   def set_rate
     if self.rate.blank?
-      self.update_column(:rate, amount.to_f / quantity)
+      self.update_column(:rate, amount.to_f / quantity.to_f)
     end
   end
 end

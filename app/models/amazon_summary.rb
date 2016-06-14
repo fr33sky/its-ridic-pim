@@ -224,8 +224,8 @@ class AmazonSummary
       .map(&:to_f)
     sorted = mop.sort
     len = sorted.length
-    if sorted[0].nil?
-      return -1
+    if sorted[0].nil? # Item was not ordered...use refund_average_rate instead
+      return refund_average_rate(sku)
     end
     return (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0    
   end
@@ -510,7 +510,7 @@ class AmazonSummary
     # Create Sales Receipt
     receipt = SalesReceipt.create!(contact_id: amazon_customer.id, payment_id: payment_method.id)
 
-    sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap]
+    sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax]
     descriptions = {
       "3U-6S08-R6CZ"     => "It's Ridic! Warm touchscreen / texting winter gloves - Black",
       "8A-OK9F-9LI8"     => "It's Ridic! Warm touchscreen / texting winter gloves - White",
@@ -649,10 +649,10 @@ class AmazonSummary
           prices.each do |price|
             order_qty = self.order_quantity_by_price(sku, price)
             order_amt = self.order_amount_by_price(sku, price)
-            order_rate = (order_amt / order_qty).to_f.round(2) if order_qty != 0
+            order_rate = (order_amt.to_f / order_qty.to_f).to_f.round(2) if order_qty != 0
             refund_amt  = self.refund_amount(sku)
-            refund_rate = median_order_price(sku)
-            refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
+            refund_rate = self.median_order_price(sku)
+            refund_qty  = (refund_amt.to_f / refund_rate.to_f).to_f.round(2) if refund_rate != 0
             disc_amt    = self.promotion_amount(sku)
             disc_rate   = self.promotion_rate(sku)
             disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
@@ -693,7 +693,7 @@ class AmazonSummary
           order_amt   = self.order_amount(sku)
           order_rate  = (order_amt / order_qty).to_f.round(2) if order_qty != 0
           refund_amt  = self.refund_amount(sku)
-          refund_rate = median_order_price(sku)
+          refund_rate = self.median_order_price(sku)
           refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
           disc_amt    = self.promotion_amount(sku)
           disc_rate   = self.promotion_rate(sku)

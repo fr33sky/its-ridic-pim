@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Expense Receipts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @expense_receipts.each do |expense_receipt| %>
+      <tr>
+        <td><%= expense_receipt.description %></td>
+        <td><%= link_to 'Show', expense_receipt %></td>
+        <td><%= link_to 'Edit', edit_expense_receipt_path(expense_receipt) %></td>
+        <td><%= link_to 'Destroy', expense_receipt, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Expense receipt', new_expense_receipt_path %>
