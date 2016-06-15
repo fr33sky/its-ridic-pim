@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160614174540) do
+ActiveRecord::Schema.define(version: 20160614194246) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
@@ -99,9 +99,11 @@ ActiveRecord::Schema.define(version: 20160614174540) do
     t.float    "amount"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
+    t.integer  "expense_receipt_id"
   end
 
   add_index "expenses", ["expense_account_id"], name: "index_expenses_on_expense_account_id"
+  add_index "expenses", ["expense_receipt_id"], name: "index_expenses_on_expense_receipt_id"
 
   create_table "order_items", force: :cascade do |t|
     t.integer  "quantity"

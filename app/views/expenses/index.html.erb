@@ -2,7 +2,7 @@
 
 <h1>Listing Expenses</h1>
 
-<table>
+<table class='table'>
   <thead>
     <tr>
       <th>Expense account</th>
@@ -19,8 +19,6 @@
         <td><%= expense.description %></td>
         <td><%= expense.amount %></td>
         <td><%= link_to 'Show', expense %></td>
-        <td><%= link_to 'Edit', edit_expense_path(expense) %></td>
-        <td><%= link_to 'Destroy', expense, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,4 +26,3 @@
 
 <br>
 
-<%= link_to 'New Expense', new_expense_path %>

@@ -1,11 +1,26 @@
-<%= simple_form_for(@expense_receipt) do |f| %>
+<%= simple_form_for(@expense_receipt, html: { class: "form-horizontal"}) do |f| %>
   <%= f.error_notification %>
 
-  <div class="form-inputs">
+  <div class="form-group">
+    <%= f.association :bank_account %>
+  </div>
+
+  <div class="form-group">
     <%= f.input :description %>
   </div>
 
-  <div class="form-actions">
+  <h3>Expenses</h3>
+  <div id="sale-items">
+    <%= f.simple_fields_for :expenses do |expense| %>
+      <%= render 'expense_fields', :f => expense %>
+    <% end %>
+    <div class="links" style="margin-top: 1%; margin-bottom: 1%;">
+      <%= link_to_add_association 'add expense', f, :expenses, class: "btn btn-warning" %>
+    </div>
+  </div>
+
+  <div class="form-group">
     <%= f.button :submit %>
   </div>
 <% end %>
+

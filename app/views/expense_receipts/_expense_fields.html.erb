@@ -1,0 +1,31 @@
+<!--[:id, :quantity, :sales_receipt_id, :amount, :rate]) -->
+
+<div class="container">
+  <div class="nested-fields">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="form-group inline">
+          <%= f.label :expense_account %>
+          <%= f.collection_select :expense_account_id, ExpenseAccount.all, :id, :name, {}, { class: "form-control" } %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <%= f.label :description %>
+          <%= f.text_field :description, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <%= f.label :amount %>
+          <%= f.number_field :amount, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <br />
+        <%= link_to_remove_association "X", f, class: "btn btn-warning", style: "margin-top: 0.5%;" %>
+      </div>
+    </div>
+  </div>
+</div>
+
