@@ -5,3 +5,10 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+q1 = Config.create(question: "When creating an expense account, what is the default account used?",
+                   class_name: "BankAccount")
+
+q2 = Config.create(question: "When creating an expense account, what is the default customer?",
+                   class_name: "Contact")
+

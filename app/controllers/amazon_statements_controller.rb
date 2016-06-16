@@ -23,18 +23,24 @@ class AmazonStatementsController < ApplicationController
 
   def show
     @amazon_statement = AmazonStatement.find(params[:id])
-    receipt = AmazonSummary.new(@amazon_statement.report_id.to_i).create_sales_receipt
+
+    # CREATE SALES RECEIPT in App and in QBO
+    # TO DO: Move this off into a callable method and split into multiple methods
+
+    # Find other way to convert string to hash besides eval...
     receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
+
+    # For testing purposes, do not set the status to PROCESSED yet
     #@amazon_statement.status = "PROCESSED"
     #@amazon_statement.save
 
-    # First pass...loop through receipt and create products if they do not exist in QBO. e.g.:
     oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
     item_service = Quickbooks::Service::Item.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
 
     # Set up SalesReceipt in QBO
     @receipt_service = Quickbooks::Service::SalesReceipt.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
-    # These will eventually need stored in DB as a sort of set up question (e.g. which payment method do you want to use for QBO Sales Receipts from Amazon?)
+
+    # TO DO: store customer_id, deposit_to_account_id, and payment_method_id as a set up question (Config model)
     qbo_receipt = Quickbooks::Model::SalesReceipt.new({
       customer_id: 65,
       txn_date: Date.parse(receipt.user_date.to_s),
@@ -125,6 +131,9 @@ class AmazonStatementsController < ApplicationController
     created_receipt = @receipt_service.create(qbo_receipt)
     p created_receipt
 
+    # CREATE EXPENSE RECEIPT IN QBO
+    create_expense_receipt("TEST EXPENSE")
+
     redirect_to sales_receipt_path(receipt)
   end
 
@@ -203,6 +212,8 @@ class AmazonStatementsController < ApplicationController
   end
 
   def classify_income_account(prod)
+    # TO DO: Move these to a setup question (Config model) so user can define which accounts
+    # they want to go to
     if prod == 'Shipping'
       # Use "Shipping Income" account
       91
@@ -227,5 +238,12 @@ class AmazonStatementsController < ApplicationController
       # Use "Service" account
       1
     end
+  end
+
+  def create_expense_receipt(desc)
+    expense_receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_expense_receipt(desc)
+    puts "<><><><><><><><><><><><><><><><><><><><><>"
+    p expense_receipt
+    puts "<><><><><><><><><><><><><><><><><><><><><>"
   end
 end

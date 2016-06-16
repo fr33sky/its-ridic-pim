@@ -1,0 +1,12 @@
+<%= form_tag(change_configs_path, method: :put, class: "form-horizontal") do %>
+  <% @configs.each do |config| %>
+    <p>
+      <%= label_tag(config.question) %>
+      <%= select_tag 'configurations[]', options_for_select(config.class_name.constantize.all.collect { |u| [u.name, u.id] },
+                                                            [config.class_name.constantize.find_by(id: config.config_id).try(:name), 
+                                                             config.class_name.constantize.find_by(id: config.config_id).try(:id)]),
+                                                          class: "form-control" %>
+    </p>
+<% end %>
+<%= submit_tag("Update Configuration Settings", class: "btn btn-primary") %>
+<% end %>

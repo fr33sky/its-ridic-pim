@@ -613,6 +613,46 @@ class AmazonSummary
     return receipt
   end
 
+  def create_expense_receipt(description)
+    expense_methods = [:amazon_commission, :refund_commission_total, 
+                       :fba_per_order_fulfillment_fee, :fba_per_unit_fulfillment_fee, 
+                       :fba_weight_based_fee, :sales_tax_service_fee, :inbound_transportation_fee,
+                       :payable_to_amazon, :storage_fees, :shipping_chargeback, 
+                       :shipping_chargeback_refund, :warehouse_damage, 
+                       :warehouse_damage_exception, :warehouse_lost_manual,
+                       :fba_customer_return_per_order_fee, :fba_customer_return_per_unit_fee, 
+                       :fba_customer_return_weight_based_fee, :gift_wrap_charge_back,
+                       :disposal_fee, :reversal_reimbursement, :cs_error_items]
+    expense_receipt = ExpenseReceipt.create!(description: description, bank_account: Config.expense_bank_account)
+    expense_methods.each_with_index do |method, index|
+      account = case method.to_s.camelcase
+                when "RefundCommissionTotal" then "AmazonRefundCommission"
+                when "SalesTaxServiceFee" then "AmazonSalesTaxServiceFee"
+                when "InboundTransportationFee" then "FBAInboundTransportationFee"
+                when "PayableToAmazon" then "Amazon Monthly FBA FEE"
+                when "StorageFees" then "FBAStorageFee"
+                when "WarehouseDamage" then "DamagedInventory"
+                when "GiftWrapChargeBack" then "FBAGiftWrapchargeback"
+                else method.to_s.camelcase.gsub('Fba', 'FBA')
+                end
+      # Look up account by name in DB.  If it exists, use Expense.new(expense_account: Expense.find_by(name: account))
+      # If it doesn't exist...alert user?
+      expense_account = ExpenseAccount.find_by(name: account)
+      if expense_account.nil?
+        # Use default? May be set up question later
+        expense_account = ExpenseAccount.first
+      end
+      puts "()()()()()()()()()()()()()()()()()()()()"
+      puts account
+      amount = self.send(method) * -1
+      puts amount
+      puts "()()()()()()()()()()()()()()()()()()()()"
+      expense_receipt.expenses << Expense.create!(expense_account: expense_account, description: description, amount: amount) 
+    end
+    expense_receipt.save
+    expense_receipt
+  end
+
   def expense_report(description)
     expense_methods = [:amazon_commission, :refund_commission_total, 
                        :fba_per_order_fulfillment_fee, :fba_per_unit_fulfillment_fee, 

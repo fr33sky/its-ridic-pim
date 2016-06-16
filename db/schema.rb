@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160614194246) do
+ActiveRecord::Schema.define(version: 20160615193254) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
@@ -47,6 +47,14 @@ ActiveRecord::Schema.define(version: 20160614194246) do
     t.integer  "qbo_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "configs", force: :cascade do |t|
+    t.string   "question"
+    t.string   "class_name"
+    t.integer  "config_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "configurations", force: :cascade do |t|

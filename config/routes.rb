@@ -32,4 +32,9 @@ Rails.application.routes.draw do
   resources :orders
   resources :contacts
   resources :inventory, only: [:index]
+  resources :configs, only: [:index] do
+    collection do
+      put :change
+    end
+  end
 end
