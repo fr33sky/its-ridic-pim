@@ -132,7 +132,7 @@ class AmazonStatementsController < ApplicationController
     p created_receipt
 
     # CREATE EXPENSE RECEIPT IN QBO
-    create_expense_receipt("TEST EXPENSE")
+    create_expense_receipt(@amazon_statement.period, oauth_client)
 
     redirect_to sales_receipt_path(receipt)
   end
@@ -240,10 +240,29 @@ class AmazonStatementsController < ApplicationController
     end
   end
 
-  def create_expense_receipt(desc)
+  def create_expense_receipt(desc, oauth_client)
+    # Create Expense Receipt in App
     expense_receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_expense_receipt(desc)
     puts "<><><><><><><><><><><><><><><><><><><><><>"
     p expense_receipt
     puts "<><><><><><><><><><><><><><><><><><><><><>"
+    # Create Expense Receipt in QBO
+    purchase_service = Quickbooks::Service::Purchase.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
+    purchase = Quickbooks::Model::Purchase.new
+    purchase.payment_type = 'Cash'
+    purchase.account_id = Config.expense_bank_account.qbo_id
+    purchase.line_items = []
+    # Loop through all expenses and create new model for it.
+    expense_receipt.expenses.each do |expense|
+      line_item = Quickbooks::Model::PurchaseLineItem.new
+      line_item.amount = expense.amount
+      line_item.description = expense.description
+      line_item.account_based_expense! do |detail|
+        detail.account_id = expense.expense_account.qbo_id
+        detail.customer_id = 65 # TO DO: Need to add qbo_id to Contact...
+      end
+      purchase.line_items << line_item
+    end
+    result = purchase_service.create(purchase)
   end
 end

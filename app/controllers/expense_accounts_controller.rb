@@ -66,10 +66,12 @@ class ExpenseAccountsController < ApplicationController
     # Compare to what is in DB.  If none exists, create it and redirect to index.
     oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
     expense_account_service = Quickbooks::Service::Account.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
-    accounts = expense_account_service.query("SELECT * FROM Account WHERE Classification = 'Expense' AND active = true")
-    accounts.entries.each do |entry|
-      if ExpenseAccount.where(name: entry.name).count == 0
-        ExpenseAccount.create!(name: entry.name, description: entry.description, qbo_id: entry.id)
+    query = "SELECT * FROM Account WHERE Classification = 'Expense' AND active = true"
+    expense_account_service.query_in_batches(query, per_page: 1000) do |batch|
+      batch.each do |account|
+        if ExpenseAccount.where(name: account.name).count == 0
+          ExpenseAccount.create!(name: account.name, description: account.description, qbo_id: account.id)
+        end
       end
     end
     redirect_to expense_accounts_path

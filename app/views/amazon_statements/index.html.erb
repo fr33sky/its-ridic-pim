@@ -12,9 +12,9 @@
         <td><%= fa_icon("calendar") %> <%= as.period %></td>
         <td><%= number_to_currency(as.deposit_total) %></td>
         <% if as.status == "NOT_PROCESSED" %>
-          <td><%= link_to as.status, amazon_statement_path(as) %></td>
+          <td class="status"><%= link_to as.status, amazon_statement_path(as) %></td>
         <% else %>
-          <td>PROCESSED</td>
+          <td class="status">PROCESSED</td>
         <% end %>
       </tr>
     <% end %>
@@ -27,9 +27,25 @@
   <small>Retrieving data from Amazon, please wait...</small>
 </div>
 
+<div id="fountainG">
+	<div id="fountainG_1" class="fountainG"></div>
+	<div id="fountainG_2" class="fountainG"></div>
+	<div id="fountainG_3" class="fountainG"></div>
+	<div id="fountainG_4" class="fountainG"></div>
+	<div id="fountainG_5" class="fountainG"></div>
+	<div id="fountainG_6" class="fountainG"></div>
+	<div id="fountainG_7" class="fountainG"></div>
+	<div id="fountainG_8" class="fountainG"></div>
+</div>
+
 <script>
 $( document ).ready(function() {
   $(".spinner").hide();
+  $("#fountainG").hide();
+
+  $("td a").click(function() {
+    $("#fountainG").show();
+  });
 
   $(document).ajaxStart(function(){
     $(".spinner").show();
