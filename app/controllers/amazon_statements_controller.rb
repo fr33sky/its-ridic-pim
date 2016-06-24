@@ -14,8 +14,9 @@ class AmazonStatementsController < ApplicationController
       fetch_reports(client, reports)
       fetch_rest_of_reports(client, next_token)
     rescue => e
-      puts "*" * 10_000
+      puts "*" * 5_000
       logger.fatal(e.to_s)
+      logger.warn e.response.message
     end
     redirect_to amazon_statements_path
   end
