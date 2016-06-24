@@ -57,14 +57,6 @@ ActiveRecord::Schema.define(version: 20160615193254) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "configurations", force: :cascade do |t|
-    t.string   "primary_marketplace_id"
-    t.string   "merchant_id"
-    t.string   "auth_token"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
   create_table "contacts", force: :cascade do |t|
     t.string   "name"
     t.string   "address"
