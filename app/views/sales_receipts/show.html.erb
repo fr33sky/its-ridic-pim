@@ -13,7 +13,7 @@
     <th>Amount</th>
   </thead>
   <tbody>
-    <% @sales_receipt.sales.each do |sale| %>
+    <% @sales_receipt.sales.includes(:product).each do |sale| %>
     <tr>
       <td><%= product_name(sale) %></td>
       <td><%= sale.quantity %></td>
