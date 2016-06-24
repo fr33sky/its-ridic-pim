@@ -16,7 +16,6 @@ class AmazonStatementsController < ApplicationController
     rescue => e
       puts "*" * 10_000
       logger.fatal(e.to_s)
-      redirect_to amazon_statements_path
     end
     redirect_to amazon_statements_path
   end
