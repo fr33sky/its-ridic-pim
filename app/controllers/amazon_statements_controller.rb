@@ -53,30 +53,32 @@ class AmazonStatementsController < ApplicationController
     # Loop through and create items if necessary in QBO
     receipt.sales.each do |sale|
       if !sale.product.nil?
-        # Query QB to see if product exists.  If not, create it.
-        items = item_service.query("SELECT * FROM Item WHERE sku = '#{sale.product.upc}'")
-        p items
-        if items.count == 0
-          item = Quickbooks::Model::Item.new
-          item.income_account_id = 82
-          item.type = "NonInventory"
-          item.name = sale.product.upc
-          item.description = sale.product.name
-          item.unit_price = sale.product.price
-          item.sku = sale.product.upc
-          p item
-        else
-          sale.product.qbo_id = items.entries[0].id
-          sale.product.save
-        end
-        begin
-          created_item = item_service.create(item)
-          sale.product.qbo_id = created_item.id
-          sale.product.save
-        rescue Exception => e
-          puts "**************** QBO ERROR 1 *******************"
-          p e
-          puts "**************** QBO ERROR 1 *******************"
+        if sale.product.qbo_id.nil?
+          # Query QB to see if product exists.  If not, create it.
+          items = item_service.query("SELECT * FROM Item WHERE sku = '#{sale.product.upc}'")
+          p items
+          if items.count == 0
+            item = Quickbooks::Model::Item.new
+            item.income_account_id = 82
+            item.type = "NonInventory"
+            item.name = sale.product.upc
+            item.description = sale.product.name
+            item.unit_price = sale.product.price
+            item.sku = sale.product.upc
+            p item
+          else
+            sale.product.qbo_id = items.entries[0].id
+            sale.product.save
+          end
+          begin
+            created_item = item_service.create(item)
+            sale.product.qbo_id = created_item.id
+            sale.product.save
+          rescue Exception => e
+            puts "**************** QBO ERROR 1 *******************"
+            p e
+            puts "**************** QBO ERROR 1 *******************"
+          end
         end
       else
         prod = sale.description.gsub(" ", "_").camelize
@@ -282,7 +284,7 @@ class AmazonStatementsController < ApplicationController
         account = account_service.query("SELECT * FROM Account WHERE name = 'Inventory - #{prod.upc}'")
         p account
         if account.entries.count == 0
-          puts "THIS ACCOUNT DOES NOT EXIST.  CREATING IN QBO."
+          puts "THIS ACCOUNT DOES NOT EXIST.  CREATING IN QBO..."
           new_account = Quickbooks::Model::Account.new(name: "Inventory - #{prod.upc}", classification: "Asset", 
                                                        parent_id: inventory_asset_account_id, account_type: "Other Current Asset",
                                                        account_sub_type: "Inventory")
@@ -294,12 +296,10 @@ class AmazonStatementsController < ApplicationController
           prod.save
         else
           # ID not in DB, but exists in QBO
-          puts "ID does not exist in DB, but does in QBO. Adding to DB"
+          puts "ID does not exist in DB, but does in QBO. Adding to DB..."
           prod.inventory_asset_account_id = account.entries[0].id
           prod.save
         end
-      else
-        puts "THIS ACCOUNT EXISTS IN DBO.  ID=#{prod.inventory_asset_account_id}"
       end
     end
   end
