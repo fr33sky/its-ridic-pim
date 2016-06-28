@@ -28,17 +28,13 @@ class AmazonStatementsController < ApplicationController
     # TO DO: Move this off into a callable method and split into multiple methods
 
     # Find other way to convert string to hash besides eval...
-    #receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
+    receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
 
     # For testing purposes, do not set the status to PROCESSED yet
     #@amazon_statement.status = "PROCESSED"
     #@amazon_statement.save
 
     oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
-
-    ## TEST
-    create_journal_entry(oauth_client)
-    #TEST
     item_service = Quickbooks::Service::Item.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
 
     # Set up SalesReceipt in QBO
@@ -306,6 +302,5 @@ class AmazonStatementsController < ApplicationController
         puts "THIS ACCOUNT EXISTS IN DBO.  ID=#{prod.inventory_asset_account_id}"
       end
     end
-    abort
   end
 end
