@@ -28,13 +28,17 @@ class AmazonStatementsController < ApplicationController
     # TO DO: Move this off into a callable method and split into multiple methods
 
     # Find other way to convert string to hash besides eval...
-    receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
+    #receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
 
     # For testing purposes, do not set the status to PROCESSED yet
     #@amazon_statement.status = "PROCESSED"
     #@amazon_statement.save
 
     oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
+
+    ## TEST
+    create_journal_entry(oauth_client)
+    #TEST
     item_service = Quickbooks::Service::Item.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
 
     # Set up SalesReceipt in QBO
@@ -133,6 +137,9 @@ class AmazonStatementsController < ApplicationController
 
     # CREATE EXPENSE RECEIPT IN QBO
     create_expense_receipt(@amazon_statement.period, oauth_client)
+
+    # CREATE JOURNAL ENTRY/COGS
+    create_journal_entry(oauth_client)
 
     redirect_to sales_receipt_path(receipt)
   end
@@ -264,5 +271,41 @@ class AmazonStatementsController < ApplicationController
       purchase.line_items << line_item
     end
     result = purchase_service.create(purchase)
+  end
+
+  def create_journal_entry(oauth_client)
+    # Lookup / Create Accounts in QBO
+    # STEP 1: FIND "Inventory Asset" ACCOUNT
+    account_service = Quickbooks::Service::Account.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
+    accounts = account_service.query("SELECT * FROM Account WHERE name = 'Inventory Asset'")
+    inventory_asset_account_id = accounts.entries[0].id.to_i
+    # STEP 2: Lookup / Create SubAccounts for Items (if they do not exist):
+    Product.all.each do |prod|
+      # Check to see if id is already stored in DB
+      if prod.inventory_asset_account_id.nil?
+        account = account_service.query("SELECT * FROM Account WHERE name = 'Inventory - #{prod.upc}'")
+        p account
+        if account.entries.count == 0
+          puts "THIS ACCOUNT DOES NOT EXIST.  CREATING IN QBO."
+          new_account = Quickbooks::Model::Account.new(name: "Inventory - #{prod.upc}", classification: "Asset", 
+                                                       parent_id: inventory_asset_account_id, account_type: "Other Current Asset",
+                                                       account_sub_type: "Inventory")
+          p new_account
+          result = account_service.create(new_account)
+          p result
+          puts "THE ACCOUNT ID TO BE SAVE IS: #{result.id}"
+          prod.inventory_asset_account_id = result.id
+          prod.save
+        else
+          # ID not in DB, but exists in QBO
+          puts "ID does not exist in DB, but does in QBO. Adding to DB"
+          prod.inventory_asset_account_id = account.entries[0].id
+          prod.save
+        end
+      else
+        puts "THIS ACCOUNT EXISTS IN DBO.  ID=#{prod.inventory_asset_account_id}"
+      end
+    end
+    abort
   end
 end
