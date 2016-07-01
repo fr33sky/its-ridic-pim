@@ -611,10 +611,12 @@ class AmazonSummary
              end
       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> prod: #{prod}"
       amount = self.send(m)
-      qty = 1
-      qty = -1 if prod == "PromotionShipping"
-      rate = amount * qty
-      receipt.sales.create!(description: prod, quantity: qty , amount: amount, rate: rate)
+      if amount != 0
+        qty = 1
+        qty = -1 if prod == "PromotionShipping"
+        rate = amount * qty
+        receipt.sales.create!(description: prod, quantity: qty , amount: amount, rate: rate)
+      end
     end
     return receipt
   end
