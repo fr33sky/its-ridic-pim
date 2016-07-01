@@ -410,6 +410,11 @@ class AmazonSummary
       .map(&:to_f).inject(:+).to_f.round(2)
   end
 
+  def balance_adjustment
+    JsonPath.on(@summary_as_array, "$..OtherTransaction[?(@.TransactionType=='BalanceAdjustment')]..Amount..__content__")
+      .map(&:to_f).inject(:+).to_f.round(2)
+  end
+ 
   # Returns the sum of the ShippingChargeback marked as an expense
   # * *Returns* :
   #   - A sum of the expenses marked as ShippingChargeback
@@ -510,7 +515,7 @@ class AmazonSummary
     # Create Sales Receipt
     receipt = SalesReceipt.create!(contact_id: amazon_customer.id, payment_id: payment_method.id)
 
-    sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax]
+    sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax, :balance_adjustment]
     descriptions = {
       "3U-6S08-R6CZ"     => "It's Ridic! Warm touchscreen / texting winter gloves - Black",
       "8A-OK9F-9LI8"     => "It's Ridic! Warm touchscreen / texting winter gloves - White",
@@ -601,6 +606,7 @@ class AmazonSummary
              when "shipping_tax" then "ShippingSalesTax"
              when "gift_wrap" then "FBAGiftWrap"
              when "gift_wrap_tax" then "GiftWrapTax"
+             when "balance_adjustment" then "BalanceAdjustment"
              else m.to_s
              end
       puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> prod: #{prod}"

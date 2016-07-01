@@ -137,7 +137,7 @@ class AmazonStatementsController < ApplicationController
     create_expense_receipt(@amazon_statement.period, oauth_client)
 
     # CREATE JOURNAL ENTRY/COGS
-    create_journal_entry(oauth_client)
+    create_journal_entry(oauth_client, receipt)
 
     redirect_to sales_receipt_path(receipt)
   end
@@ -271,7 +271,7 @@ class AmazonStatementsController < ApplicationController
     result = purchase_service.create(purchase)
   end
 
-  def create_journal_entry(oauth_client)
+  def create_journal_entry(oauth_client, receipt)
     # Lookup / Create Accounts in QBO
     # STEP 1: FIND "Inventory Asset" ACCOUNT
     account_service = Quickbooks::Service::Account.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
@@ -302,5 +302,8 @@ class AmazonStatementsController < ApplicationController
         end
       end
     end
+    p receipt
+    p "&" * 100
+    p receipt.sales
   end
 end
