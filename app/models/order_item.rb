@@ -17,6 +17,7 @@ class OrderItem < ActiveRecord::Base
   end
 
   def set_average_cost
+    self.order.save
     product = Product.find(self.product_id)
     if self.order.created_at == self.order.user_date
       if product.item_ordered?
