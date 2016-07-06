@@ -39,4 +39,12 @@ class Product < ActiveRecord::Base
       false
     end
   end
+
+  def average_cost(date)
+    if item_ordered?
+      OrderItem.joins(:order).where("product_id = ? AND user_date < ?", self.id, date).order("user_date DESC").first.average_cost
+    else
+      0
+    end
+  end
 end

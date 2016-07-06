@@ -59,7 +59,7 @@ class AmazonStatementsController < ApplicationController
           p items
           if items.count == 0
             item = Quickbooks::Model::Item.new
-            item.income_account_id = 82
+            item.income_account_id = 82 #TO DO: Move to Setup Question
             item.type = "NonInventory"
             item.name = sale.product.upc
             item.description = sale.product.name
@@ -302,8 +302,43 @@ class AmazonStatementsController < ApplicationController
         end
       end
     end
-    p receipt
-    p "&" * 100
-    p receipt.sales
+    # STEP 3: Create Journal Entry
+    journal_entry_service = Quickbooks::Service::JournalEntry.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
+    journal_entry = Quickbooks::Model::JournalEntry.new
+    receipt.sales.each do |sale|
+      if sale.product and sale.quantity > 0
+        # Create Credit Line
+        line_item_credit = Quickbooks::Model::Line.new
+        average_cost = sale.product.average_cost(receipt.user_date)
+        description = "Sale of #{sale.quantity} at #{average_cost}"
+        line_item_credit.description = description
+        line_item_credit.amount      = average_cost
+        line_item_credit.detail_type = 'JournalEntryLineDetail'
+        jel = Quickbooks::Model::JournalEntryLineDetail.new
+        jel.posting_type = 'Credit'
+        #jel.tax_code_id = 2
+        #jel.tax_applicable_on = 'Credit'
+        jel.account_id = sale.product.inventory_asset_account_id
+        line_item_credit.journal_entry_line_detail = jel
+        journal_entry.line_items << line_item_credit
+
+        # Create Debit Line
+        line_item_credit = Quickbooks::Model::Line.new
+        average_cost = sale.product.average_cost(receipt.user_date)
+        description = "Sale of #{sale.quantity} at #{average_cost}"
+        line_item_credit.description = description
+        line_item_credit.amount      = average_cost
+        line_item_credit.detail_type = 'JournalEntryLineDetail'
+        jel = Quickbooks::Model::JournalEntryLineDetail.new
+        jel.posting_type = 'Debit'
+        #jel.tax_code_id = 2
+        #jel.tax_applicable_on = 'Credit'
+        jel.account_id = 80 # TO DO: Set up question! 80 = Sandbox2
+        line_item_credit.journal_entry_line_detail = jel
+        journal_entry.line_items << line_item_credit
+      end
+    end
+    result = journal_entry_service.create(journal_entry)
+    p result
   end
 end
