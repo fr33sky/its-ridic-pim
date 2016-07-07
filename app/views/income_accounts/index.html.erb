@@ -1,0 +1,55 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Income Accounts</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Qbo</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @income_accounts.each do |income_account| %>
+      <tr>
+        <td><%= income_account.name %></td>
+        <td><%= income_account.description %></td>
+        <td><%= income_account.qbo_id %></td>
+        <td><%= link_to 'Show', income_account, class: "btn btn-primary" %></td>
+        <td><%= link_to 'Edit', edit_income_account_path(income_account), class: "btn btn-success" %></td>
+        <td><%= link_to 'Destroy', income_account, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Income account', new_income_account_path %>
+<p>
+<%= link_to "Fetch", fetch_income_accounts_path, remote: true, class: "btn btn-success btn-sm" %>
+<div class="spinner">
+  <i class="fa fa-refresh fa-spin" aria-hidden="true"></i>
+  <small>Retrieving accounts from QBO, please wait...</small>
+</div>
+</p>
+
+<script>
+$( document ).ready(function() {
+    $(".spinner").hide();
+
+    $(document).ajaxStart(function(){
+      $(".spinner").show();
+      });
+
+    $(document).ajaxStop(function(){
+      $(".spinner").hide();
+    location.reload();
+  });
+});
+</script>
+
+

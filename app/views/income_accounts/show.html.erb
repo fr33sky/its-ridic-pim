@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @income_account.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @income_account.description %>
+</p>
+
+<p>
+  <strong>Qbo:</strong>
+  <%= @income_account.qbo_id %>
+</p>
+
+<%= link_to 'Edit', edit_income_account_path(@income_account) %> |
+<%= link_to 'Back', income_accounts_path %>

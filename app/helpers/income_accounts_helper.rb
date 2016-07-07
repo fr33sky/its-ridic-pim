@@ -1,0 +1,2 @@
+module IncomeAccountsHelper
+end
