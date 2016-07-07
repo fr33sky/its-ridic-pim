@@ -61,6 +61,22 @@ class ContactsController < ApplicationController
     end
   end
 
+  def fetch
+    # Make QBO Request SELECT * FROM Contact active WHERE active = true
+    # Compare to what is in DB.  If none exists, create it and redirect to index.
+    oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
+    customer_service = Quickbooks::Service::Customer.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
+    query = "SELECT * FROM Customer WHERE active = true"
+    customer_service.query_in_batches(query, per_page: 1000) do |batch|
+      batch.each do |account|
+        if Contact.where(name: account.display_name).count == 0
+          Contact.create!(name: account.display_name, qbo_id: account.id)
+        end
+      end
+    end
+    redirect_to contacts_path
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_contact

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160628182802) do
+ActiveRecord::Schema.define(version: 20160707202331) do
 
   create_table "adjustment_types", force: :cascade do |t|
     t.string   "name"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20160628182802) do
     t.string   "country"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "qbo_id"
   end
 
   create_table "credentials", force: :cascade do |t|

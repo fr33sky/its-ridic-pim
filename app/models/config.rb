@@ -8,4 +8,9 @@ class Config < ActiveRecord::Base
     id = Config.find_by(question: "When creating an expense account, what is the default customer?").config_id
     Contact.find_by(id: id)
   end
+
+  def self.sales_receipt_customer
+    id = Config.find_by(question: "When creating a sales receipt, what is the default customer?").config_id
+    Contact.find_by(id: id).qbo_id
+  end
 end

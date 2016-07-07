@@ -42,7 +42,7 @@ class AmazonStatementsController < ApplicationController
 
     # TO DO: store customer_id, deposit_to_account_id, and payment_method_id as a set up question (Config model)
     qbo_receipt = Quickbooks::Model::SalesReceipt.new({
-      customer_id: 65,
+      customer_id: Config.sales_receipt_customer,
       txn_date: Date.parse(receipt.user_date.to_s),
       deposit_to_account_id: 4,
       payment_method_id: 2

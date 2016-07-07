@@ -11,6 +11,7 @@
       <th>State</th>
       <th>Postal code</th>
       <th>Country</th>
+      <th>Qbo ID</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -24,6 +25,7 @@
         <td><%= contact.state %></td>
         <td><%= contact.postal_code %></td>
         <td><%= contact.country %></td>
+        <td><%= contact.qbo_id %></td>
         <td><%= link_to 'Show', contact, class: "btn btn-primary" %></td>
         <td><%= link_to 'Edit', edit_contact_path(contact), class: "btn btn-success" %></td>
         <td><%= link_to 'Destroy', contact, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %></td>
@@ -34,4 +36,26 @@
 
 <br>
 
-<%= link_to 'New Contact', new_contact_path %>
+<%= link_to 'New Contact', new_contact_path, class: "btn btn-primary" %>
+
+<%= link_to "Fetch", fetch_contacts_path, remote: true, class: "btn btn-success btn-sm" %>
+<div class="spinner">
+  <i class="fa fa-refresh fa-spin" aria-hidden="true"></i>
+  <small>Retrieving Customers from QBO, please wait...</small>
+</div>
+
+<script>
+$( document ).ready(function() {
+  $(".spinner").hide();
+
+  $(document).ajaxStart(function(){
+    $(".spinner").show();
+  });
+
+  $(document).ajaxStop(function(){
+    $(".spinner").hide();
+    location.reload();
+  });
+});
+</script>
+
