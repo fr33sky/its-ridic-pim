@@ -15,3 +15,5 @@ q2 = Config.create(question: "When creating an expense account, what is the defa
 q3 = Config.create(question: "When creating a sales receipt, what is the default customer?", class_name: "Contact")
 
 q4 = Config.create(question: "When creating a sales receipt, what is the deposit to account?", class_name: "BankAccount")
+
+q5 = Config.create(question: "When creating a product in QBO, what is the income account used?", class_name: "IncomeAccount")

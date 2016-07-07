@@ -57,7 +57,7 @@ class AmazonStatementsController < ApplicationController
           p items
           if items.count == 0
             item = Quickbooks::Model::Item.new
-            item.income_account_id = 82 #TO DO: Move to Setup Question
+            item.income_account_id = Config.sales_receipt_income_account
             item.type = "NonInventory"
             item.name = sale.product.upc
             item.description = sale.product.name
