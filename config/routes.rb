@@ -30,7 +30,10 @@ Rails.application.routes.draw do
   resources :order_items
   resources :products
   resources :orders
-  resources :contacts
+
+  resources :contacts do
+    get :fetch, :on => :collection
+  end
   resources :inventory, only: [:index]
   resources :configs, only: [:index] do
     collection do
