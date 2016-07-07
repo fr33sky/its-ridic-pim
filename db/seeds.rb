@@ -13,3 +13,5 @@ q2 = Config.create(question: "When creating an expense account, what is the defa
                    class_name: "Contact")
 
 q3 = Config.create(question: "When creating a sales receipt, what is the default customer?", class_name: "Contact")
+
+q4 = Config.create(question: "When creating a sales receipt, what is the deposit to account?", class_name: "BankAccount")

@@ -13,4 +13,9 @@ class Config < ActiveRecord::Base
     id = Config.find_by(question: "When creating a sales receipt, what is the default customer?").config_id
     Contact.find_by(id: id).qbo_id
   end
+
+  def self.sales_receipt_deposit_account
+    id = Config.find_by(question: "When creating a sales receipt, what is the deposit to account?").config_id
+    BankAccount.find_by(id: id).qbo_id
+  end
 end

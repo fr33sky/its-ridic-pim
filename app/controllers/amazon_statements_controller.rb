@@ -40,12 +40,10 @@ class AmazonStatementsController < ApplicationController
     # Set up SalesReceipt in QBO
     @receipt_service = Quickbooks::Service::SalesReceipt.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
 
-    # TO DO: store customer_id, deposit_to_account_id, and payment_method_id as a set up question (Config model)
     qbo_receipt = Quickbooks::Model::SalesReceipt.new({
       customer_id: Config.sales_receipt_customer,
       txn_date: Date.parse(receipt.user_date.to_s),
-      deposit_to_account_id: 4,
-      payment_method_id: 2
+      deposit_to_account_id: Config.sales_receipt_deposit_account
     })
     qbo_receipt.auto_doc_number!
 
