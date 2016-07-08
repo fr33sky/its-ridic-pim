@@ -17,3 +17,10 @@ q3 = Config.create(question: "When creating a sales receipt, what is the default
 q4 = Config.create(question: "When creating a sales receipt, what is the deposit to account?", class_name: "BankAccount")
 
 q5 = Config.create(question: "When creating a product in QBO, what is the income account used?", class_name: "IncomeAccount")
+
+q6 = Config.create(question: "What account do you want Amazon 'Shipping' to go to?", class_name: "MultipleAccounts")
+q7 = Config.create(question: "What account do you want Amazon 'PromotionShipping' to go to?", class_name: "MultipleAccounts")
+q8 = Config.create(question: "What account do you want Amazon 'ShippingSalesTax' to go to?", class_name: "MultipleAccounts")
+q9 = Config.create(question: "What account do you want Amazon 'FBAGiftWrap' to go to?", class_name: "MultipleAccounts")
+q10 = Config.create(question: "What account do you want Amazon 'GiftWrap' to go to?", class_name: "MultipleAccounts")
+q11 = Config.create(question: "What account do you want unknown Amazon to go to?", class_name: "MultipleAccounts")
