@@ -650,7 +650,7 @@ class AmazonSummary
       expense_account = Account.find_by(name: account)
       if expense_account.nil?
         # Use default? May be set up question later
-        expense_account = Account.find_by(id: QboConfig.classify_unknown)
+        expense_account = Account.find_by(id: Config.classify_unknown)
       end
       puts "()()()()()()()()()()()()()()()()()()()()"
       puts account
