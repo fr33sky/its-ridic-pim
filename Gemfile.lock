@@ -258,6 +258,7 @@ DEPENDENCIES
   command_line_reporter
   country_select
   devise
+  dotenv
   dotenv-rails
   factory_girl_rails
   font-awesome-rails (~> 4.6, >= 4.6.2.0)

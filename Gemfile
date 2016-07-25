@@ -26,6 +26,7 @@ gem 'devise'
 group :development, :test do
   gem 'byebug'
   gem 'dotenv-rails'
+  gem 'dotenv'
   gem 'sqlite3'
 end
 

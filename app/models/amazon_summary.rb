@@ -645,10 +645,10 @@ class AmazonSummary
                 end
       # Look up account by name in DB.  If it exists, use Expense.new(expense_account: Expense.find_by(name: account))
       # If it doesn't exist...alert user?
-      expense_account = ExpenseAccount.find_by(name: account)
+      expense_account = Account.find_by(name: account)
       if expense_account.nil?
         # Use default? May be set up question later
-        expense_account = ExpenseAccount.first
+        expense_account = Account.find_by(id: QboConfig.classify_unknown)
       end
       puts "()()()()()()()()()()()()()()()()()()()()"
       puts account
