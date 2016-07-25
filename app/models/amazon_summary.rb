@@ -1,5 +1,7 @@
 require 'peddler'
-require 'dotenv'
+if Rails.env.development?
+  require 'dotenv'
+end
 require 'json'
 require 'jsonpath'
 
