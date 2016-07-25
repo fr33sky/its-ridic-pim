@@ -655,7 +655,7 @@ class AmazonSummary
       amount = self.send(method) * -1
       puts amount
       puts "()()()()()()()()()()()()()()()()()()()()"
-      expense_receipt.expenses << Expense.create!(expense_account: expense_account, description: description, amount: amount) 
+      expense_receipt.expenses << Expense.create!(account: expense_account, description: description, amount: amount) 
     end
     expense_receipt.save
     expense_receipt
