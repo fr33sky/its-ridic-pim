@@ -650,7 +650,9 @@ class AmazonSummary
       expense_account = Account.find_by(name: account)
       if expense_account.nil?
         # Use default? May be set up question later
-        expense_account = Account.find_by(id: Config.classify_unknown)
+        puts "UNKNOWN expense: #{method.to_s.camelcase.gsub('Fba','FBA')}"
+        puts "USING DEFAULT..."
+        expense_account = Account.find_by(name: "Commissions & fees")
       end
       puts "()()()()()()()()()()()()()()()()()()()()"
       puts account
