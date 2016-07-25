@@ -2,11 +2,9 @@ require 'peddler'
 require 'dotenv'
 require 'json'
 require 'jsonpath'
-require 'command_line_reporter'
 
 # Allows you to query payment statements from Amazon
 class AmazonSummary
-  include CommandLineReporter
   attr_accessor :summary, :summary_as_array
 
   # Creates a new AmazonSummary for querying based on either a Hash representation
@@ -20,7 +18,9 @@ class AmazonSummary
   # * *Returns* :
   #   - An AmazonSummary object that can be queried for specific information
   def initialize(report)
-    Dotenv.load
+    if Rails.env.development?
+      Dotenv.load
+    end
     case report
     when Fixnum
       client = MWS::Reports::Client.new(
@@ -661,43 +661,6 @@ class AmazonSummary
     expense_receipt
   end
 
-  def expense_report(description)
-    expense_methods = [:amazon_commission, :refund_commission_total, 
-                       :fba_per_order_fulfillment_fee, :fba_per_unit_fulfillment_fee, 
-                       :fba_weight_based_fee, :sales_tax_service_fee, :inbound_transportation_fee,
-                       :payable_to_amazon, :storage_fees, :shipping_chargeback, 
-                       :shipping_chargeback_refund, :warehouse_damage, 
-                       :warehouse_damage_exception, :warehouse_lost_manual,
-                       :fba_customer_return_per_order_fee, :fba_customer_return_per_unit_fee, 
-                       :fba_customer_return_weight_based_fee, :gift_wrap_charge_back,
-                       :disposal_fee, :reversal_reimbursement, :cs_error_items]
-    table :border => true do
-      row :color => 'red' do
-        column '#', :width => 2
-        column 'ACCOUNT', :width => 35
-        column 'DESCRIPTION', :width => 30
-        column 'AMOUNT', :width => 10
-      end
-      expense_methods.each_with_index do |method, index|
-        account = case method.to_s.camelcase
-                  when "RefundCommissionTotal" then "AmazonRefundCommission"
-                  when "SalesTaxServiceFee" then "AmazonSalesTaxServiceFee"
-                  when "InboundTransportationFee" then "FBAInboundTransportationFee"
-                  when "PayableToAmazon" then "Amazon Monthly FBA FEE"
-                  when "StorageFees" then "FBAStorageFee"
-                  when "WarehouseDamage" then "DamagedInventory"
-                  when "GiftWrapChargeBack" then "FBAGiftWrapchargeback"
-                  else method.to_s.camelcase.gsub('Fba', 'FBA')
-                  end
-        row :color => 'green', :bold => true do
-          column index + 1
-          column account
-          column "#{description}"
-          column self.send(method) *-1
-        end
-      end
-    end
-  end
 
   private
   # Helper Methods
