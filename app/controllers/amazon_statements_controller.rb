@@ -219,27 +219,27 @@ class AmazonStatementsController < ApplicationController
     # they want to go to
     if prod == 'Shipping'
       # Use "Shipping Income" account
-      91
+      Config.classify_shipping_income
     elsif prod == 'SaleTax'
       # Use "Sale Tax Payable" account
-      94
+      config.classify_sale_tax
     elsif prod == 'PromotionShipping'
       # Use "Promo Rebates on Shipping" account
-      97
+      Config.classify_promotion_shipping
     elsif prod == 'ShippingSalesTax'
       # Use Sale Tax Payable:FBAShippingTax" account
-      95
+      Config.classify_shipping_sales_tax
     elsif prod == 'FBAgiftwrap'
       # Use "Services" account
-      1
+      Config.classify_fba_gift_wrap
     elsif prod == 'BalanceAdjustment'
       # Use "Gross Receipts" account
-      96
+      Config.classify_balance_adjustment
     elsif prod == 'GiftWrapTax'
-      94
+      Config.classify_gift_wrap_tax
     else
       # Use "Service" account
-      1
+      Config.classify_unknown
     end
   end
 

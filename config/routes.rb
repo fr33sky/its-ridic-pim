@@ -1,12 +1,6 @@
 Rails.application.routes.draw do
-  resources :income_accounts do
-    get :fetch, :on => :collection
-  end
-  resources :bank_accounts do
-    get :fetch, :on => :collection
-  end
-
-  resources :expense_accounts do
+  devise_for :users
+  resources :accounts do
     get :fetch, :on => :collection
   end
 

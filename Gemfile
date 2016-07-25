@@ -22,6 +22,7 @@ gem 'command_line_reporter'
 gem 'jsonpath', '~> 0.5.8'
 gem 'oauth-plugin', '~> 0.5.1'
 gem 'quickbooks-ruby', '~> 0.4.3'
+gem 'devise'
 
 group :development, :test do
   gem 'byebug'
@@ -32,5 +33,9 @@ group :development do
   gem 'web-console', '~> 2.0'
   gem 'spring'
   gem 'bullet'
+end
+
+group :production do
+  gem 'pg'
 end
 

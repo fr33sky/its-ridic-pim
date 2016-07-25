@@ -631,7 +631,7 @@ class AmazonSummary
                        :fba_customer_return_per_order_fee, :fba_customer_return_per_unit_fee, 
                        :fba_customer_return_weight_based_fee, :gift_wrap_charge_back,
                        :disposal_fee, :reversal_reimbursement, :cs_error_items]
-    expense_receipt = ExpenseReceipt.create!(description: description, bank_account: Config.expense_bank_account)
+    expense_receipt = ExpenseReceipt.create!(description: description, account: Config.expense_bank_account)
     expense_methods.each_with_index do |method, index|
       account = case method.to_s.camelcase
                 when "RefundCommissionTotal" then "AmazonRefundCommission"

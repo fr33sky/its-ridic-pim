@@ -2,18 +2,12 @@
   <% @configs.each do |config| %>
     <p>
     <%= label_tag(config.question) %>
-    <% if not config.class_name == 'MultipleAccounts' %>
-      <%= select_tag 'configurations[]', options_for_select(config.class_name.constantize.all.collect { |u| [u.name, u.id] },
+    <% clause = config.account_type ? "account_type = '#{config.account_type}'" : "" %>
+    <% acct_type = config.try(:account_type) || "" %>
+    <%= select_tag 'configurations[]', options_for_select(config.class_name.constantize.where(clause).order(:name).collect { |u| [u.name + " - " + u.try(:account_type).to_s + " (#{u.try(:qbo_id)})", u.id] },
                                                             [config.class_name.constantize.find_by(id: config.config_id).try(:name), 
                                                              config.class_name.constantize.find_by(id: config.config_id).try(:id)]),
       class: "form-control" %>
-  <% else %>
-    <%= select_tag 'configurations[]', options_for_select(BankAccount.all.collect { |u| [u.name, u.id] } + IncomeAccount.all.collect { |u| [u.name, u.id] } + ExpenseAccount.all.collect { |u| [u.name, u.id] },
-                                                          [BankAccount.find_by(id: config.config_id).try(:name) || IncomeAccount.find_by(id: config.config_id).try(:name) || ExpenseAccount.find_by(id: config.config_id).try(:name),
-                                                           BankAccount.find_by(id: config.config_id).try(:id)   || IncomeAccount.find_by(id: config.config_id).try(:id)]  || ExpenseAccount.find_by(id: config.config_id).try(:id)),
-    class: "form-control" %>
-  <% end %>
-
   </p>
 <% end %>
 <%= submit_tag("Update Configuration Settings", class: "btn btn-primary") %>

@@ -6,21 +6,18 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-q1 = Config.create(question: "When creating an expense account, what is the default account used?",
-                   class_name: "BankAccount")
-
-q2 = Config.create(question: "When creating an expense account, what is the default customer?",
+Config.create(question: "When creating an expense receipt, what is the default account used?",
+                   class_name: "Account", account_type: "Bank")
+Config.create(question: "When creating an expense receipt, what is the default customer?",
                    class_name: "Contact")
-
-q3 = Config.create(question: "When creating a sales receipt, what is the default customer?", class_name: "Contact")
-
-q4 = Config.create(question: "When creating a sales receipt, what is the deposit to account?", class_name: "BankAccount")
-
-q5 = Config.create(question: "When creating a product in QBO, what is the income account used?", class_name: "IncomeAccount")
-
-q6 = Config.create(question: "What account do you want Amazon 'Shipping' to go to?", class_name: "MultipleAccounts")
-q7 = Config.create(question: "What account do you want Amazon 'PromotionShipping' to go to?", class_name: "MultipleAccounts")
-q8 = Config.create(question: "What account do you want Amazon 'ShippingSalesTax' to go to?", class_name: "MultipleAccounts")
-q9 = Config.create(question: "What account do you want Amazon 'FBAGiftWrap' to go to?", class_name: "MultipleAccounts")
-q10 = Config.create(question: "What account do you want Amazon 'GiftWrap' to go to?", class_name: "MultipleAccounts")
-q11 = Config.create(question: "What account do you want unknown Amazon to go to?", class_name: "MultipleAccounts")
+Config.create(question: "When creating a sales receipt, what is the default customer?", class_name: "Contact")
+Config.create(question: "When creating a sales receipt, what is the deposit to account?", class_name: "Account")
+Config.create(question: "When creating a product in QBO, what is the income account used?", class_name: "Account", account_type: "Income")
+Config.create(question: "What account do you want Amazon 'Shipping' to go to?", class_name: "Account")
+Config.create(question: "What account do you want Amazon 'SaleTax' to go to?", class_name: "Account")
+Config.create(question: "What account do you want Amazon 'PromotionShipping' to go to?", class_name: "Account")
+Config.create(question: "What account do you want Amazon 'ShippingSalesTax' to go to?", class_name: "Account")
+Config.create(question: "What account do you want Amazon 'FBAGiftWrap' to go to?", class_name: "Account")
+Config.create(question: "What account do you want Amazon 'BalanceAdjustment' to go to?", class_name: "Account")
+Config.create(question: "What account do you want Amazon 'GiftWrapTax' to go to?", class_name: "Account")
+Config.create(question: "What account do you want unknown Amazon to go to?", class_name: "Account")
