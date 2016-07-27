@@ -191,6 +191,8 @@ class AmazonStatementsController < ApplicationController
 
   def authenticate
     callback = oauth_callback_amazon_statements_url
+    puts "callback: "
+    p callback
     token = $qb_oauth_consumer.get_request_token(:oauth_callback => callback)
     session[:qb_request_token] = Marshal.dump(token)
     redirect_to("https://appcenter.intuit.com/Connect/Begin?oauth_token=#{token.token}") and return
@@ -198,7 +200,11 @@ class AmazonStatementsController < ApplicationController
 
   def oauth_callback
     at = Marshal.load(session[:qb_request_token]).get_access_token(:oauth_verifier => params[:oauth_verifier])
+    puts "at:"
+    p at
+    puts "Adding to database..."
     QboConfig.create(token: at.token, secret: at.secret, realm_id: params['realmId'])
+    p QboConfig.last
     flash.notice = "Your QuickBooks account has been successfully linked."
     @msg = 'Redirecting. Please wait.'
     @url = amazon_statements_path
