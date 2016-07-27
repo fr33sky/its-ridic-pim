@@ -8,15 +8,43 @@ class AmazonStatementsController < ApplicationController
 
   def fetch
     client = set_client
-    begin
-      reports = client.get_report_list
+    reports    = client.get_report_list
+    next_token = reports.next_token
+    reports.xml["GetReportListResponse"]["GetReportListResult"]['ReportInfo'].each do |report|
+      type = report['ReportType']
+      if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
+        begin
+          report_id = report['ReportId']
+          item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
+          add_statement_to_db(item_to_add, report_id)
+        rescue => e
+          p e
+          next
+        end
+      else
+        next
+      end
+    end
+
+    while(true)
+      reports    = client.get_report_list_by_next_token(next_token)
       next_token = reports.next_token
-      fetch_reports(client, reports)
-      fetch_rest_of_reports(client, next_token)
-    rescue => e
-      puts "*" * 5_000
-      logger.fatal(e.to_s)
-      logger.warn e.response.message
+      reports.xml["GetReportListByNextTokenResponse"]["GetReportListByNextTokenResult"]["ReportInfo"].each do |report|
+        type = report['ReportType']
+        if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
+          begin
+            report_id = report['ReportId']
+            item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
+            add_statement_to_db(item_to_add, report_id)
+          rescue => e
+            p e
+            next
+          end
+        else
+          next
+        end
+        break if next_token == false
+      end
     end
     redirect_to amazon_statements_path
   end
