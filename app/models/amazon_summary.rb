@@ -635,6 +635,17 @@ class AmazonSummary
                        :disposal_fee, :reversal_reimbursement, :cs_error_items]
     expense_receipt = ExpenseReceipt.create!(description: description, account: Config.expense_bank_account)
     expense_methods.each_with_index do |method, index|
+      # TO DO: Not use hardcoded values.
+      # Something like:
+      # expense_methods.each do |method|
+      #   account_method = "expense_#{method}".to_sym
+      #   begin:
+      #     expense_account = Config.send(account_method)
+      #   rescue NoMethodError => e
+      #     expense_account = Config.default_expense_account
+      #   end
+      #   ...
+      # end 
       account = case method.to_s.camelcase
                 when "RefundCommissionTotal" then "AmazonRefundCommission"
                 when "SalesTaxServiceFee" then "AmazonSalesTaxServiceFee"
