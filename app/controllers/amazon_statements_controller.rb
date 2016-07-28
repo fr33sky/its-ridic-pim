@@ -9,12 +9,14 @@ class AmazonStatementsController < ApplicationController
   def fetch
     client = set_client
     reports    = client.get_report_list
+    p reports
     next_token = reports.next_token
     reports.xml["GetReportListResponse"]["GetReportListResult"]['ReportInfo'].each do |report|
       type = report['ReportType']
       if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
         begin
           report_id = report['ReportId']
+          puts report_id
           item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
           add_statement_to_db(item_to_add, report_id)
         rescue => e
@@ -27,16 +29,22 @@ class AmazonStatementsController < ApplicationController
     end
 
     while(true)
+      puts "Next Token"
       reports    = client.get_report_list_by_next_token(next_token)
+      p reports
       next_token = reports.next_token
+      p next_token
       reports.xml["GetReportListByNextTokenResponse"]["GetReportListByNextTokenResult"]["ReportInfo"].each do |report|
+        puts "|report|"
         type = report['ReportType']
         if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
           begin
             report_id = report['ReportId']
+            puts report_id
             item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
             add_statement_to_db(item_to_add, report_id)
           rescue => e
+            puts "Oh no!"
             p e
             next
           end
@@ -45,6 +53,7 @@ class AmazonStatementsController < ApplicationController
         end
         break if next_token == false
       end
+      break if next_token == false
     end
     redirect_to amazon_statements_path
   end
