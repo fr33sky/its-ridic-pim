@@ -1,6 +1,8 @@
 <%= simple_form_for(@order, html: { class: "form-horizontal" }) do |f| %>
   <%= f.error_notification %>
-  <%= link_to "Add Date", "#", id: "adduserdate" %>
+  <% if !@order.user_date %>
+    <%= link_to "Add Date", "#", id: "adduserdate" %>
+  <% end %>
   <%= f.input :user_date, include_blank: true %>
   <%= f.input :name %>
   <%= f.label :vendor %>
@@ -30,20 +32,6 @@ function cancelContact() {
 }
 
 $(document).ready(function() {
-    function toggleDate() {
-    $(".order_user_date").toggle();
-    if ($("#adduserdate").text() == "Add Date") {
-      $("#adduserdate").text("Hide Date");
-    } else {
-      $("#adduserdate").text("Add Date");
-    }
-  }
-
-
-  $(".order_user_date").hide();
-  var addUserDate = document.getElementById('adduserdate');
-  addUserDate.addEventListener('click', toggleDate, false);
-
   // Add Ability to add new vendors/contacts on the fly:
   // Step 1: Append to contact:
   $("#order_contact_id").append('<option value=9999>Add New Vendor...</option>');
@@ -52,11 +40,7 @@ $(document).ready(function() {
     if ($(this).val() == "9999") {
       $("#order_contact_id").hide();
       $(".contactSelectAdd").show();
-     // $('#cancel-client').show();
     }
   });
-
-
-
 });
 </script>

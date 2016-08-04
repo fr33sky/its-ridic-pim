@@ -1,5 +1,18 @@
 <h1>New Order</h1>
 
 <%= render 'form' %>
+<script>
+function toggleDate() {
+  $(".order_user_date").toggle();
+  if ($("#adduserdate").text() == "Add Date") {
+    $("#adduserdate").text("Hide Date");
+  } else {
+    $("#adduserdate").text("Add Date");
+  }
+}
 
+$(".order_user_date").hide();
+var addUserDate = document.getElementById('adduserdate');
+addUserDate.addEventListener('click', toggleDate, false);
+</script>
 <%= link_to 'Back', orders_path %>

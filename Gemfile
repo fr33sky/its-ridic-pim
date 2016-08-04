@@ -22,6 +22,7 @@ gem 'jsonpath', '~> 0.5.8'
 gem 'oauth-plugin', '~> 0.5.1'
 gem 'quickbooks-ruby', '~> 0.4.3'
 gem 'devise'
+gem 'local_time'
 
 group :development, :test do
   gem 'byebug'
