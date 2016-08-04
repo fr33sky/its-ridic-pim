@@ -6,6 +6,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Email</th>
       <th>Address</th>
       <th>City</th>
       <th>State</th>
@@ -20,6 +21,7 @@
     <% @contacts.each do |contact| %>
       <tr>
         <td><%= contact.name %></td>
+        <td><%= contact.email_address %></td>
         <td><%= contact.address %></td>
         <td><%= contact.city %></td>
         <td><%= contact.state %></td>

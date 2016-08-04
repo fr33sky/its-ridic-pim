@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160725202158) do
+ActiveRecord::Schema.define(version: 20160804144459) do
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name"
@@ -74,9 +74,10 @@ ActiveRecord::Schema.define(version: 20160725202158) do
     t.string   "state"
     t.string   "postal_code"
     t.string   "country"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.integer  "qbo_id"
+    t.string   "email_address"
   end
 
   create_table "credentials", force: :cascade do |t|
