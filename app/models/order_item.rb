@@ -6,9 +6,13 @@ class OrderItem < ActiveRecord::Base
 
   def last_order_average_cost
     if self.product.item_ordered?
-      OrderItem.joins(:order).where("product_id = ? AND user_date < ?", self.product.id, self.order.user_date).order("user_date DESC").first.average_cost
+      begin
+        return OrderItem.joins(:order).where("product_id = ? AND user_date < ?", self.product.id, self.order.user_date).order("user_date DESC").first.average_cost
+      rescue NoMethodError => e
+        return 0.0
+      end
     else
-      0.0
+      return 0.0
     end
   end
 

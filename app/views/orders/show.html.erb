@@ -21,7 +21,7 @@ Address: <%= @order.contact.address %><br/>
         <td><%= item.product.name %></td>
         <td><%= item.quantity %></td>
         <td><%= item.cost %></td>
-        <td><%= item.average_cost %></td>
+        <td><%= number_with_precision(item.average_cost, precision: 4) %></td>
       </tr>
     <% end %>
   </tbody>
