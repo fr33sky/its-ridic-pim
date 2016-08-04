@@ -24,7 +24,9 @@ class OrdersController < ApplicationController
   # POST /orders
   # POST /orders.json
   def create
+    contact_name = params["order"]["contact_name"]
     @order = Order.new(order_params)
+    @order.contact_id = create_new_contact(contact_name) if !contact_name.blank?
 
     respond_to do |format|
       if @order.save
@@ -69,6 +71,11 @@ class OrdersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def order_params
-      params.require(:order).permit(:name, :contact_id, :user_date, order_items_attributes: [:id, :cost, :quantity, :product_id, :order_id, :_destroy])
+      params.require(:order).permit(:name, :contact_id, :user_date, :contact_name, order_items_attributes: [:id, :cost, :quantity, :product_id, :order_id, :_destroy]).except(:contact_name)
+    end
+
+    def create_new_contact(name)
+      c = Contact.create!(name: name)
+      c.id
     end
 end

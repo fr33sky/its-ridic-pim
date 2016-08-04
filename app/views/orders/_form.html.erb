@@ -5,6 +5,10 @@
   <%= f.input :name %>
   <%= f.label :vendor %>
   <%= f.collection_select :contact_id, Contact.all, :id, :name, {}, { class: "form-control" } %>
+  <div class="contactSelectAdd form-group" style="display: none;">
+    <a id="cancel-contact" style="color:white" href="javascript:cancelContact()">Cancel</a><input placeholder="Enter name" type="text" name="order[contact_name]" id="order_contact_name" />
+  </div>
+
   <h3>Order Items</h3>
   <div id="order-items">
     <%= f.simple_fields_for :order_items do |oi| %>
@@ -18,8 +22,15 @@
 <% end %>
 
 <script>
+function cancelContact() {
+  $(".contactSelectAdd").hide();
+  $("#order_contact_id").show();
+  $("#order_contact_id").val('1');
+  $("#order_contact_name").val('');
+}
+
 $(document).ready(function() {
-  function toggleDate() {
+    function toggleDate() {
     $(".order_user_date").toggle();
     if ($("#adduserdate").text() == "Add Date") {
       $("#adduserdate").text("Hide Date");
@@ -27,8 +38,25 @@ $(document).ready(function() {
       $("#adduserdate").text("Add Date");
     }
   }
+
+
   $(".order_user_date").hide();
   var addUserDate = document.getElementById('adduserdate');
   addUserDate.addEventListener('click', toggleDate, false);
+
+  // Add Ability to add new vendors/contacts on the fly:
+  // Step 1: Append to contact:
+  $("#order_contact_id").append('<option value=9999>Add New Vendor...</option>');
+  // Step 2: Show/Hide
+  $('select[name="order[contact_id]"]').change(function() {
+    if ($(this).val() == "9999") {
+      $("#order_contact_id").hide();
+      $(".contactSelectAdd").show();
+     // $('#cancel-client').show();
+    }
+  });
+
+
+
 });
 </script>
