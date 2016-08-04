@@ -5,11 +5,7 @@ class OrderItem < ActiveRecord::Base
 
 
   def last_order_average_cost
-    begin
-      return OrderItem.joins(:order).where("product_id = ? AND user_date < ?", self.product.id, self.order.user_date).order("user_date DESC").first.average_cost
-    rescue
-      return 0.00
-    end
+    OrderItem.joins(:order).where("product_id = ? AND user_date < ?", self.product.id, self.order.user_date).order("user_date DESC").first.average_cost ||= 0
   end
 
   def last_quantity(oi=self)
