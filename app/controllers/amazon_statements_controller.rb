@@ -7,9 +7,14 @@ class AmazonStatementsController < ApplicationController
   end
 
   def fetch
-    client = set_client
-    reports    = client.get_report_list
-    p reports
+    client  = set_client
+    begin
+      reports = client.get_report_list
+    rescue Excon::Errors::BadRequest => e
+      puts "*" * 50
+      logger.warn e.response.message
+      puts "*" * 50
+    end
     next_token = reports.next_token
     reports.xml["GetReportListResponse"]["GetReportListResult"]['ReportInfo'].each do |report|
       type = report['ReportType']
@@ -31,11 +36,8 @@ class AmazonStatementsController < ApplicationController
     while(true)
       puts "Next Token"
       reports    = client.get_report_list_by_next_token(next_token)
-      p reports
       next_token = reports.next_token
-      p next_token
       reports.xml["GetReportListByNextTokenResponse"]["GetReportListByNextTokenResult"]["ReportInfo"].each do |report|
-        puts "|report|"
         type = report['ReportType']
         if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
           begin
@@ -43,9 +45,10 @@ class AmazonStatementsController < ApplicationController
             puts report_id
             item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
             add_statement_to_db(item_to_add, report_id)
-          rescue => e
-            puts "Oh no!"
-            p e
+          rescue Exception => e
+            puts "*" * 50
+            logger.warn e.response.message
+            puts "*" * 50
             next
           end
         else
