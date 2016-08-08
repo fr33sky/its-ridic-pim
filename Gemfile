@@ -23,6 +23,9 @@ gem 'oauth-plugin', '~> 0.5.1'
 gem 'quickbooks-ruby', '~> 0.4.3'
 gem 'devise'
 gem 'local_time'
+gem 'delayed_job_active_record'
+gem 'daemons'
+gem 'workless'
 
 group :development, :test do
   gem 'byebug'

@@ -9,7 +9,12 @@ class AmazonStatementsController < ApplicationController
   def fetch
     client  = set_client
     begin
-      reports = client.get_report_list
+      reports = client.get_report_list(available_from_date: 200.days.ago.iso8601, report_type_list: "_GET_V2_SETTLEMENT_REPORT_DATA_XML_", max_count: 100) 
+      p reports.methods.sort
+      p reports.xml
+      puts "Next token:"
+      p reports.next_token
+      puts "**"
     rescue Excon::Errors::BadRequest => e
       puts "*" * 50
       logger.warn e.response.message
@@ -33,30 +38,29 @@ class AmazonStatementsController < ApplicationController
       end
     end
 
-    while(true)
-      puts "Next Token"
-      reports    = client.get_report_list_by_next_token(next_token)
-      next_token = reports.next_token
-      reports.xml["GetReportListByNextTokenResponse"]["GetReportListByNextTokenResult"]["ReportInfo"].each do |report|
-        type = report['ReportType']
-        if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
-          begin
-            report_id = report['ReportId']
-            puts report_id
-            item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
-            add_statement_to_db(item_to_add, report_id)
-          rescue Exception => e
-            puts "*" * 50
-            logger.warn e.response.message
-            puts "*" * 50
+    while(next_token)
+      begin
+        reports    = client.get_report_list_by_next_token(next_token)
+        next_token = reports.next_token
+        reports.xml["GetReportListByNextTokenResponse"]["GetReportListByNextTokenResult"]["ReportInfo"].each do |report|
+          type = report['ReportType']
+          if type.include?('_GET_V2_SETTLEMENT_REPORT_DATA_XML_')
+              report_id = report['ReportId']
+              puts report_id
+              item_to_add = client.get_report(report_id).xml['AmazonEnvelope']['Message']['SettlementReport']
+              add_statement_to_db(item_to_add, report_id)
+          else
             next
           end
-        else
-          next
+          break if next_token == false
         end
         break if next_token == false
+      rescue Excon::Errors::BadRequest => e
+        puts "%" * 50
+        logger.warn e.response.message
+        puts "%" * 50
+        next
       end
-      break if next_token == false
     end
     redirect_to amazon_statements_path
   end
