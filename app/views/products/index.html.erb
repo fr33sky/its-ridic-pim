@@ -1,3 +1,5 @@
+<%= javascript_include_tag "product.js.coffee", extname: false %>
+
 <p id="notice"><%= notice %></p>
 
 <h1>Listing Products</h1>
@@ -13,7 +15,7 @@
     </tr>
   </thead>
 
-  <tbody>
+  <tbody class="all-products">
     <% @products.each do |product| %>
       <tr>
         <td><%= product.name %></td>
@@ -28,6 +30,15 @@
   </tbody>
 </table>
 
+<div class="errors">
+</div>
+<%= render 'new_product_form' %>
 <br>
 
-<%= link_to 'New Product', new_product_path, class: "btn btn-primary" %>
+<div class="spinner">
+  <i class="fa fa-refresh fa-spin" aria-hidden="true"></i>
+  <small>Working...</small>
+</div>
+
+<%= link_to "Fetch", fetch_products_path, remote: true, class: "btn btn-success btn-sm" %>
+

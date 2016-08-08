@@ -1,4 +1,7 @@
 class Product < ActiveRecord::Base
+  validates :name, presence: true, uniqueness: true
+  validates :upc, presence: true, uniqueness: true
+  validates :price, presence: true
   def quantity_ordered
     OrderItem.where("product_id = ?", self.id).sum(:quantity)
   end
@@ -46,5 +49,30 @@ class Product < ActiveRecord::Base
     else
       0
     end
+  end
+
+  def self.get_product_report_from_amazon(client, report_request_id)
+    puts "get_product_report_from_amazon..."
+    status = ""
+    while status != "_DONE_"
+      response = client.get_report_request_list(report_request_id_list: [report_request_id]).parse
+      p response
+      status = response["ReportRequestInfo"]["ReportProcessingStatus"]
+      puts "status=#{status}"
+      if status == "_DONE_"
+        report_id = response["ReportRequestInfo"]["GeneratedReportId"]
+        product_csv = client.get_report(report_id).parse
+        parse_product_report(product_csv)
+      end
+      puts "Sleeping..."
+      sleep 300
+    end
+  end
+
+  private
+
+  def parse_product_report(product_csv)
+    puts "DONE!"
+    p product_csv
   end
 end

@@ -4,6 +4,16 @@ class ApplicationController < ActionController::Base
 	# For APIs, you may want to use :null_session instead.
 	protect_from_forgery with: :exception
 
+  def set_client
+    MWS::Reports::Client.new(
+      primary_marketplace_id: Credential.last.primary_marketplace_id,
+      merchant_id: Credential.last.merchant_id,
+      aws_access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+      aws_secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+      auth_token: Credential.last.auth_token
+    )
+  end
+
 	def authenticate
 		callback = oauth_callback_settlements_url
 		token = $qb_oauth_consumer.get_request_token(:oauth_callback => callback)

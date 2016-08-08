@@ -184,16 +184,6 @@ class AmazonStatementsController < ApplicationController
     redirect_to sales_receipt_path(receipt)
   end
 
-  def set_client
-    MWS::Reports::Client.new(
-      primary_marketplace_id: Credential.last.primary_marketplace_id,
-      merchant_id: Credential.last.merchant_id,
-      aws_access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      aws_secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-      auth_token: Credential.last.auth_token
-    )
-  end
-
   def fetch_reports(client, reports, next_token = false)
     report_param = { true =>  { 1 => "GetReportListByNextTokenResponse", 2 => "GetReportListByNextTokenResult" },
                      false => { 1 => "GetReportListResponse", 2 => "GetReportListResult" } }

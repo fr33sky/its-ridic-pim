@@ -1,0 +1,21 @@
+<div class="new-product">
+  <%= simple_form_for(@product, remote: true, html: { class: "form-inline", id: "new-product-form" }) do |f| %>
+    <% if @product.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@product.errors.count, "error") %> prohibited this product from being saved:</h2>
+
+        <ul>
+          <% @product.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="row">
+      <%= f.input :name %>
+      <%= f.input :upc %>
+      <%= f.input :price %>
+      <%= f.submit "Submit", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

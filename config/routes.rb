@@ -25,7 +25,11 @@ Rails.application.routes.draw do
   root 'home#index'
 
   resources :order_items
-  resources :products
+
+  resources :products do
+    get :fetch, :on => :collection
+  end
+
   resources :orders
 
   resources :contacts do

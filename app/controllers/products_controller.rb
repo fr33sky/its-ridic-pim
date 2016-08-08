@@ -5,6 +5,7 @@ class ProductsController < ApplicationController
   # GET /products.json
   def index
     @products = Product.all
+    @product = Product.new
   end
 
   # GET /products/1
@@ -29,6 +30,7 @@ class ProductsController < ApplicationController
     respond_to do |format|
       if @product.save
         format.html { redirect_to @product, notice: 'Product was successfully created.' }
+        format.js {}
         format.json { render :show, status: :created, location: @product }
       else
         format.html { render :new }
@@ -59,6 +61,14 @@ class ProductsController < ApplicationController
       format.html { redirect_to products_url, notice: 'Product was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def fetch
+    client = set_client
+    mws_request = client.request_report("_GET_FLAT_FILE_OPEN_LISTINGS_DATA_").parse
+    report_request_id = mws_request["ReportRequestInfo"]["ReportRequestId"]
+    Product.get_product_report_from_amazon(client, report_request_id)
+    redirect_to products_path
   end
 
   private
