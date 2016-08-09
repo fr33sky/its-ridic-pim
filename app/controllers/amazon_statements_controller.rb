@@ -244,18 +244,7 @@ class AmazonStatementsController < ApplicationController
     render 'close_and_redirect', layout: false
   end  
 
-  private
-
-  def set_qb_service
-    oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
-    @vendor_service = Quickbooks::Service::Vendor.new
-    @vendor_service.access_token = oauth_client
-    @vendor_service.company_id = QboConfig.realm_id
-  end
-
   def classify_income_account(prod)
-    # TO DO: Move these to a setup question (Config model) so user can define which accounts
-    # they want to go to
     if prod == 'Shipping'
       # Use "Shipping Income" account
       Config.classify_shipping_income
@@ -280,6 +269,15 @@ class AmazonStatementsController < ApplicationController
       # Use "Service" account
       Config.classify_unknown
     end
+  end
+
+  private
+
+  def set_qb_service
+    oauth_client = OAuth::AccessToken.new($qb_oauth_consumer, QboConfig.first.token, QboConfig.first.secret)
+    @vendor_service = Quickbooks::Service::Vendor.new
+    @vendor_service.access_token = oauth_client
+    @vendor_service.company_id = QboConfig.realm_id
   end
 
   def create_expense_receipt(desc, oauth_client)
