@@ -1,7 +1,6 @@
 class AmazonStatementsController < ApplicationController
   before_action :set_qb_service, only: [:show]
-  # GET /amazon_statements
-  # GET /amazon_statements.json
+
   def index
     @amazon_statements = AmazonStatement.all
   end
