@@ -1,2 +1,0 @@
-$(document).ready ->
-  $(".spinner").hide()
