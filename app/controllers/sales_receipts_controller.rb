@@ -2,7 +2,7 @@ class SalesReceiptsController < ApplicationController
   before_action :set_receipt, only: [:show, :edit, :update, :destroy]
 
   def index
-    @sales_receipts = SalesReceipt.all
+    @sales_receipts = SalesReceipt.includes(:contact, :sales => :product)
   end
 
   def show
@@ -44,7 +44,7 @@ class SalesReceiptsController < ApplicationController
   def destroy
     @sales_receipt.destroy
     respond_to do |format|
-      format.html { redirect_to sales_receipt_path, notice: 'Sales Receipt was successfully destroyed.' }
+      format.html { redirect_to sales_receipts_path, notice: 'Sales Receipt was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

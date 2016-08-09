@@ -26,7 +26,7 @@
     </table>
     <p>Total: <%= number_to_currency(sales_receipt.total) %></p>
     <p>
-    <%= link_to "View", sales_receipt_path(sales_receipt), class: "btn btn-primary" %>
+    <%= link_to "View", sales_receipt, class: "btn btn-primary" %>
     <%= link_to "Edit", edit_sales_receipt_path(sales_receipt), class: "btn btn-success" %>
     <%= link_to "Delete", sales_receipt, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
     </p>
