@@ -248,7 +248,7 @@ class AmazonStatementsController < ApplicationController
   def classify_income_account(prod)
     if prod == 'Shipping'
       # Use "Shipping Income" account
-      Config.classify_shipping_income
+      Config.classify_shipping
     elsif prod == 'SaleTax'
       # Use "Sale Tax Payable" account
       config.classify_sale_tax
