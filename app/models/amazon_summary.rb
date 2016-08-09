@@ -519,12 +519,13 @@ class AmazonSummary
 
     sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax, :balance_adjustment]
     self.skus.sort.each do |sku|
+      sku_description = Product.find_by(upc: sku).name
       Sale.transaction do
         # Find / create Product
         product = Product.find_by(upc: sku)
 
         if product.nil?
-          product = Product.create!(name: descriptions[sku] ||= sku, upc: sku, price: median_order_price(sku))
+          product = Product.create!(name: sku_description, upc: sku, price: median_order_price(sku))
         end
 
         if has_multiple_prices?(sku)
@@ -539,7 +540,7 @@ class AmazonSummary
             disc_amt    = self.promotion_amount(sku)
             disc_rate   = self.promotion_rate(sku)
             disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
-            description = descriptions[sku] ||= sku
+            description = sku_description
             if order_qty != 0
               receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
             end
@@ -560,7 +561,7 @@ class AmazonSummary
           disc_amt    = self.promotion_amount(sku)
           disc_rate   = self.promotion_rate(sku)
           disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
-          description = descriptions[sku] ||= sku
+          description = sku_description
           goodwillamt = self.goodwill(sku)
           mfi_amt     = self.missing_from_inbound_amount(sku)
           mfi_qty     = self.missing_from_inbound_quantity(sku)
