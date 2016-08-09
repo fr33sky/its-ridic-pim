@@ -518,27 +518,10 @@ class AmazonSummary
     receipt = SalesReceipt.create!(contact_id: amazon_customer.id, payment_id: payment_method.id)
 
     sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax, :balance_adjustment]
-    descriptions = {
-      "3U-6S08-R6CZ"     => "It's Ridic! Warm touchscreen / texting winter gloves - Black",
-      "8A-OK9F-9LI8"     => "It's Ridic! Warm touchscreen / texting winter gloves - White",
-      "1V-Y2BK-UYT2"     => "It's Ridic! Record Stall Metal Filled 2-panel Hacky Sack",
-      "635833403782"     => "It's Ridic! Spiral Pellet Filled 32-panel Hacky Sack Footbag",
-      "635833403799"     => "It's Ridic! Record-breaker sand filled 2-panel Hacky Sack",
-      "HX-V5LI-NAGX"     => "It's Ridic! Round Stall Sand Filled 32-panel Hacky Sack",
-      "5M-E4RR-K4EB"     => "It's Ridic! Round Pop Pellet Filled 2-panel Hacky Sack Footbag",
-      "Magflash-Silver"  => "IT'S RIDIC! SILVER Extendible Magnetic LED Flashlight Pickup Tool",
-      "Magflash-Black"   => "IT'S RIDIC! BLACK Extendible Magnetic LED Flashlight Pickup Tool",
-      "Magflash-Blue"    => "IT'S RIDIC! BLUE Extendible Magnetic LED Flashlight Pickup Tool",
-      "Magflash-Red"     => "IT'S RIDIC! RED Extendible Magnetic LED Flashlight Pickup Tool",
-      "YogaSock-Black"   => "IT'S RIDIC! Women 100% Pure Cotton Yoga Sock Black",
-      "YogaSock-Green"   => "IT'S RIDIC! Women 100% Pure Cotton Yoga Sock Green",
-      "YogaSock-Pink"    => "IT'S RIDIC! Women 100% Pure Cotton Yoga Sock Pink",
-      "YogaSock-Purple"  => "IT'S RIDIC! Women 100% Pure Cotton Yoga Sock Purple"
-    }
     self.skus.sort.each do |sku|
       Sale.transaction do
         # Find / create Product
-        product = Product.find_by(name: descriptions[sku] ||= sku)
+        product = Product.find_by(upc: sku)
 
         if product.nil?
           product = Product.create!(name: descriptions[sku] ||= sku, upc: sku, price: median_order_price(sku))
