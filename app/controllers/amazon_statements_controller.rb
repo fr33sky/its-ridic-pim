@@ -127,7 +127,7 @@ class AmazonStatementsController < ApplicationController
         if items.entries.count == 0
           # Create Item in QBO
           item = Quickbooks::Model::Item.new
-          item.income_account_id = classify_income_account(prod)
+          item.income_account_id = AmazonStatementsController.classify_income_account(prod)
           item.type = "NonInventory"
           item.name = prod
           item.description = prod
@@ -244,7 +244,7 @@ class AmazonStatementsController < ApplicationController
     render 'close_and_redirect', layout: false
   end  
 
-  def classify_income_account(prod)
+  def self.classify_income_account(prod)
     if prod == 'Shipping'
       # Use "Shipping Income" account
       Config.classify_shipping_income
