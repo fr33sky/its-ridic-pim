@@ -1,4 +1,7 @@
 <h1>Sales Receipt</h1>
+<%= link_to "Edit Sales Receipt", edit_sales_receipt_path(@sales_receipt), class: "btn btn-warning" %>
+<%= link_to "Delete Sales Receipt", sales_receipt_path(@sales_receipt), method: :delete, data: { confirm: "Are you sure?" },
+  class: "btn btn-danger" %>
 <h2>Customer: <%= link_to @sales_receipt.contact.name, contact_path(@sales_receipt.contact) %></h2>
 <h2>Date: <%= @sales_receipt.user_date.strftime("%m/%d/%Y") %></h2>
 <h3>Payment: <%= @sales_receipt.payment.name %></h3>
@@ -29,10 +32,9 @@
   Total: <%= number_to_currency(@sales_receipt.total) %>
 </p>
 
-<%= link_to "Edit Sales Receipt", edit_sales_receipt_path(@sales_receipt), class: "btn btn-success" %>
-<%= link_to "Delete Sales Receipt", sales_receipt_path(@sales_receipt), method: :delete, data: { confirm: "Are you sure?" },
-  class: "btn btn-danger" %>
-
+<p>
+<%= link_to "New Sales Receipt", new_sales_receipt_path, class: "btn btn-success" %>
+</p>
 <p>
 <%= link_to "All Sales Receipts", sales_receipts_path, class: "btn btn-primary" %>
 </p>
