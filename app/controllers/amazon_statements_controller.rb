@@ -68,7 +68,7 @@ class AmazonStatementsController < ApplicationController
     @amazon_statement = AmazonStatement.find(params[:id])
 
     if @amazon_statement.status != "NOT_PROCESSED"
-      redirect_to root_path
+      redirect_to root_path and return
     end
 
     @amazon_statement.status = "PROCESSED"
@@ -190,7 +190,7 @@ class AmazonStatementsController < ApplicationController
     puts "*" * 500
     puts "JOURNAL CREATED!"
     puts "RE-DIRECTING TO SALES RECEIPT"
-    redirect_to sales_receipt_path(receipt)
+    redirect_to sales_receipt_path(receipt) and return
   end
 
   def fetch_reports(client, reports, next_token = false)
