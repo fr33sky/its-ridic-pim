@@ -80,6 +80,10 @@ class AmazonStatementsController < ApplicationController
     # Find other way to convert string to hash besides eval...
     receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
 
+    puts "<>" * 20
+    p receipt
+    puts "<>" * 20
+
     # For testing purposes, do not set the status to PROCESSED yet
     #@amazon_statement.status = "PROCESSED"
     #@amazon_statement.save
@@ -190,7 +194,7 @@ class AmazonStatementsController < ApplicationController
     puts "*" * 500
     puts "JOURNAL CREATED!"
     puts "RE-DIRECTING TO SALES RECEIPT"
-    redirect_to sales_receipt_path(receipt) and return
+    redirect_to root_path, notice: "Receipts Created Successfully!"
   end
 
   def fetch_reports(client, reports, next_token = false)
