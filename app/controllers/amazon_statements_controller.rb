@@ -187,7 +187,9 @@ class AmazonStatementsController < ApplicationController
 
     # CREATE JOURNAL ENTRY/COGS
     create_journal_entry(oauth_client, receipt)
-
+    puts "*" * 500
+    puts "JOURNAL CREATED!"
+    puts "RE-DIRECTING TO SALES RECEIPT"
     redirect_to sales_receipt_path(receipt)
   end
 
