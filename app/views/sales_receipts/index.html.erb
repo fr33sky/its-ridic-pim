@@ -1,7 +1,7 @@
 <h1>All Sales Receipts</h1>
 
 <% @sales_receipts.each do |sales_receipt| %>
-  <div class="sales-receipt">
+  <div id="sales-receipt-<%= sales_receipt.id %>" class="sales-receipt">
     <ul>
       <li><%= sales_receipt.user_date.strftime("%m/%d/%Y") %></li>
       <li><%= link_to sales_receipt.contact.name, contact_path(sales_receipt.contact) %></li>
@@ -28,7 +28,7 @@
     <p>
     <%= link_to "View", sales_receipt, class: "btn btn-primary" %>
     <%= link_to "Edit", edit_sales_receipt_path(sales_receipt), class: "btn btn-success" %>
-    <%= link_to "Delete", sales_receipt, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+    <%= link_to "Delete", sales_receipt, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger", remote: true %>
     </p>
   </div>
 <% end %>

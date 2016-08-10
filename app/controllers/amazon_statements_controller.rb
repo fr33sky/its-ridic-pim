@@ -374,7 +374,12 @@ class AmazonStatementsController < ApplicationController
         journal_entry.line_items << line_item_credit
       end
     end
-    result = journal_entry_service.create(journal_entry)
+    begin
+      result = journal_entry_service.create(journal_entry)
+    rescue Exception => e
+      puts "Error creating Journal Entry..."
+      p e
+    end
     p result
   end
 end
