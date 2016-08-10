@@ -67,6 +67,10 @@ class AmazonStatementsController < ApplicationController
   def show
     @amazon_statement = AmazonStatement.find(params[:id])
 
+    if @amazon_statement.status != "NOT_PROCESSED"
+      redirect_to root_path
+    end
+
     # CREATE SALES RECEIPT in App and in QBO
     # TO DO: Move this off into a callable method and split into multiple methods
 
@@ -181,6 +185,8 @@ class AmazonStatementsController < ApplicationController
     # CREATE JOURNAL ENTRY/COGS
     create_journal_entry(oauth_client, receipt)
 
+    @amazon_statement.status = "PROCESSED"
+    @amazon_statement.save
     redirect_to sales_receipt_path(receipt)
   end
 
