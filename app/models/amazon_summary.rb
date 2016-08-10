@@ -519,7 +519,7 @@ class AmazonSummary
 
     sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax, :balance_adjustment]
     self.skus.sort.each do |sku|
-      sku_description = Product.find_by(upc: sku).name
+      sku_description = Product.find_by(upc: sku).try(:name).to_s
       Sale.transaction do
         # Find / create Product
         product = Product.find_by(upc: sku)
