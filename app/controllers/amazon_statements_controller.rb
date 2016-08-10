@@ -71,6 +71,9 @@ class AmazonStatementsController < ApplicationController
       redirect_to root_path
     end
 
+    @amazon_statement.status = "PROCESSED"
+    @amazon_statement.save
+
     # CREATE SALES RECEIPT in App and in QBO
     # TO DO: Move this off into a callable method and split into multiple methods
 
@@ -185,9 +188,6 @@ class AmazonStatementsController < ApplicationController
     # CREATE JOURNAL ENTRY/COGS
     create_journal_entry(oauth_client, receipt)
 
-    @amazon_statement.status = "PROCESSED"
-    @amazon_statement.save
-    fail
     redirect_to sales_receipt_path(receipt)
   end
 
