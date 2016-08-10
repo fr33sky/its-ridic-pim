@@ -503,7 +503,7 @@ class AmazonSummary
       .map(&:to_f).inject(:+).to_f.round(2)
   end
 
-  def create_sales_receipt
+  def create_sales_receipt(user_date)
     # Find / create customer
     amazon_customer = Contact.find_by(name: "Amazon")
     if amazon_customer.nil?
@@ -515,7 +515,7 @@ class AmazonSummary
       payment_method = Payment.create!(name: "AMAZON")
     end
     # Create Sales Receipt
-    receipt = SalesReceipt.create!(contact_id: amazon_customer.id, payment_id: payment_method.id)
+    receipt = SalesReceipt.create!(contact_id: amazon_customer.id, payment_id: payment_method.id, user_date: user_date)
 
     sales_receipt_methods = [:total_tax, :shipping_total, :total_promotion_shipping, :shipping_tax, :gift_wrap, :gift_wrap_tax, :balance_adjustment]
     self.skus.sort.each do |sku|

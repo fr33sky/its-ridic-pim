@@ -78,7 +78,7 @@ class AmazonStatementsController < ApplicationController
     # TO DO: Move this off into a callable method and split into multiple methods
 
     # Find other way to convert string to hash besides eval...
-    receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt
+    receipt = AmazonSummary.new(eval(@amazon_statement.summary)).create_sales_receipt(@amazon_statement.period.split(" - ")[1])
 
     puts "<>" * 20
     p receipt
