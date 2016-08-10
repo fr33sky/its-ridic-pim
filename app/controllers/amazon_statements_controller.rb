@@ -300,7 +300,7 @@ class AmazonStatementsController < ApplicationController
       line_item.description = expense.description
       line_item.account_based_expense! do |detail|
         detail.account_id = expense.account.qbo_id
-        detail.customer_id = 65 # TO DO: Need to add qbo_id to Contact...
+        detail.customer_id = Config.expense_customer.qbo_id
       end
       purchase.line_items << line_item
     end
