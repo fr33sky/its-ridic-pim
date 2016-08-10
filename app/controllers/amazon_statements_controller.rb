@@ -187,6 +187,7 @@ class AmazonStatementsController < ApplicationController
 
     @amazon_statement.status = "PROCESSED"
     @amazon_statement.save
+    fail
     redirect_to sales_receipt_path(receipt)
   end
 
