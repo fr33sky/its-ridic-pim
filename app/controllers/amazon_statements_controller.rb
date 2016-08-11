@@ -303,6 +303,7 @@ class AmazonStatementsController < ApplicationController
     # Create Expense Receipt in QBO
     purchase_service = Quickbooks::Service::Purchase.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
     purchase = Quickbooks::Model::Purchase.new
+    purchase.txn_date = @amazon_statement.period.split(" - ")[1]
     purchase.payment_type = 'Cash'
     purchase.account_id = Config.expense_bank_account.qbo_id
     purchase.line_items = []
