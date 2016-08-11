@@ -190,7 +190,7 @@ class AmazonStatementsController < ApplicationController
     create_expense_receipt(@amazon_statement.period, oauth_client)
 
     # CREATE JOURNAL ENTRY/COGS
-    create_journal_entry(oauth_client, receipt)
+    create_journal_entry(oauth_client, receipt, @amazon_statement.period.split(" - ")[1])
     puts "*" * 500
     puts "JOURNAL CREATED!"
     puts "RE-DIRECTING TO SALES RECEIPT"
@@ -320,7 +320,7 @@ class AmazonStatementsController < ApplicationController
     result = purchase_service.create(purchase)
   end
 
-  def create_journal_entry(oauth_client, receipt)
+  def create_journal_entry(oauth_client, receipt, txn_date)
     # Lookup / Create Accounts in QBO
     # STEP 1: FIND "Inventory Asset" ACCOUNT
     account_service = Quickbooks::Service::Account.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
@@ -354,6 +354,7 @@ class AmazonStatementsController < ApplicationController
     # STEP 3: Create Journal Entry
     journal_entry_service = Quickbooks::Service::JournalEntry.new(:access_token => oauth_client, :company_id => QboConfig.realm_id)
     journal_entry = Quickbooks::Model::JournalEntry.new
+    journal_entry.txn_date = txn_date
     receipt.sales.each do |sale|
       if sale.product and sale.quantity > 0
         # Create Credit Line
