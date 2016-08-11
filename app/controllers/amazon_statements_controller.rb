@@ -376,7 +376,7 @@ class AmazonStatementsController < ApplicationController
         average_cost = sale.product.average_cost(receipt.user_date)
         description = "Sale of #{sale.quantity} at #{average_cost}"
         line_item_credit.description = description
-        line_item_credit.amount      = average_cost
+        line_item_credit.amount      = average_cost * sale.quantity
         line_item_credit.detail_type = 'JournalEntryLineDetail'
         jel = Quickbooks::Model::JournalEntryLineDetail.new
         jel.posting_type = 'Debit'
