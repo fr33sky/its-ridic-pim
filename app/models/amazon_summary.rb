@@ -535,7 +535,7 @@ class AmazonSummary
             order_amt = self.order_amount_by_price(sku, price)
             order_rate = (order_amt / order_qty).to_f.round(2) if order_qty != 0
             refund_amt  = self.refund_amount(sku)
-            refund_rate = median_order_price(sku)
+            refund_rate = refund_average_rate(sku)
             refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
             disc_amt    = self.promotion_amount(sku)
             disc_rate   = self.promotion_rate(sku)
@@ -556,7 +556,7 @@ class AmazonSummary
           order_amt   = self.order_amount(sku)
           order_rate  = (order_amt / order_qty).to_f.round(2) if order_qty != 0
           refund_amt  = self.refund_amount(sku)
-          refund_rate = median_order_price(sku)
+          refund_rate = refund_average_rate(sku)
           refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
           disc_amt    = self.promotion_amount(sku)
           disc_rate   = self.promotion_rate(sku)
