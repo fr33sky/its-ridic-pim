@@ -359,16 +359,14 @@ class AmazonStatementsController < ApplicationController
     receipt.sales.each do |sale|
       if sale.product and sale.quantity > 0
         # Create Credit Line
-        line_item_credit = Quickbooks::Model::Line.new
         average_cost = sale.product.average_cost(receipt.user_date)
-        description = "Sale of #{sale.quantity} at #{average_cost}"
+        description = "Sale of #{sale.quantity} at #{average_cost} (#{sale.product.upc})"
+        line_item_credit = Quickbooks::Model::Line.new
         line_item_credit.description = description
         line_item_credit.amount      = average_cost * sale.quantity
         line_item_credit.detail_type = 'JournalEntryLineDetail'
         jel = Quickbooks::Model::JournalEntryLineDetail.new
         jel.posting_type = 'Credit'
-        #jel.tax_code_id = 2
-        #jel.tax_applicable_on = 'Credit'
         jel.account_id = sale.product.inventory_asset_account_id
         line_item_credit.journal_entry_line_detail = jel
         journal_entry.line_items << line_item_credit
@@ -382,8 +380,6 @@ class AmazonStatementsController < ApplicationController
         line_item_credit.detail_type = 'JournalEntryLineDetail'
         jel = Quickbooks::Model::JournalEntryLineDetail.new
         jel.posting_type = 'Debit'
-        #jel.tax_code_id = 2
-        #jel.tax_applicable_on = 'Credit'
         jel.account_id = 80 # TO DO: Set up question! 80 = Sandbox2
         line_item_credit.journal_entry_line_detail = jel
         journal_entry.line_items << line_item_credit

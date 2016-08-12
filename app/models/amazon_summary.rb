@@ -549,7 +549,7 @@ class AmazonSummary
             if order_qty != 0
               receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
             end
-            if refund_qty != 0
+            if refund_qty != 0 and refund_amt != 0
               receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
             end
             if disc_rate != 0
@@ -579,7 +579,7 @@ class AmazonSummary
           if order_qty != 0
             receipt.sales.create!(description: description, quantity: order_qty.to_i, amount: order_amt.to_f, rate: order_rate.to_f, product: product)
           end       
-          if refund_qty != 0
+          if refund_qty != 0 and refund_amt != 0
             receipt.sales.create!(description: "REFUND - #{description}", quantity: refund_qty.to_i, amount: refund_amt.to_f, rate: refund_rate.to_f, product: product)
           end
           if disc_rate != 0
