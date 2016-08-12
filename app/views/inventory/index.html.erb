@@ -7,6 +7,9 @@
     <th>Sold</th>
     <th>Adjusted</th>
     <th>On Hand</th>
+    <th>Date (For Average Cost)</th>
+    <th>Average Cost</th>
+    <th>
   </thead>
   <tbody>
     <% @products.each do |product| %>
@@ -16,6 +19,8 @@
         <td><%= product.quantity_sold %></td>
         <td><%= product.quantity_adjusted %></td>
         <td><%= product.on_hand %></td>
+        <td><%= Date.today %></td>
+        <td><%= product.average_cost(Date.today) %></td>
       </tr>
     <% end %>
   </tbody>
