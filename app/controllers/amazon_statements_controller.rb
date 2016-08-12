@@ -194,7 +194,7 @@ class AmazonStatementsController < ApplicationController
     puts "*" * 500
     puts "JOURNAL CREATED!"
     puts "RE-DIRECTING TO SALES RECEIPT"
-    redirect_to root_path, notice: "Receipts Created Successfully!"
+    redirect_to root_path, notice: "Receipts Created Successfully!" and return
   end
 
   def fetch_reports(client, reports, next_token = false)

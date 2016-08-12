@@ -64,11 +64,15 @@ class AmazonSummary
       .map(&:to_f).inject(:+).to_f.round(2)
   end
 
+  def tax_order_retro_charge
+    JsonPath.on(@summary, '$..BaseTax..Amount..__content__').map(&:to_f).inject(:+).to_f.round(2)
+  end
+
   # The total amount of tax for orders and refunds
   # * *Returns* :
   #   - tax_orders + tax_refunds rounded to 2 decimal places
   def total_tax
-    (tax_orders.to_f + tax_refunds.to_f).round(2)
+    (tax_orders.to_f + tax_refunds.to_f + tax_order_retro_charge).round(2)
   end
 
   # The total dollar "amount" ordered for a particular SKU where the "amount-type" = ItemPrice
