@@ -531,12 +531,17 @@ class AmazonSummary
         if has_multiple_prices?(sku)
           prices = unique_prices(sku)
           prices.each do |price|
-            order_qty = self.order_quantity_by_price(sku, price)
-            order_amt = self.order_amount_by_price(sku, price)
-            order_rate = (order_amt / order_qty).to_f.round(2) if order_qty != 0
+            order_qty   = self.order_quantity_by_price(sku, price)
+            order_amt   = self.order_amount_by_price(sku, price)
+            order_rate  = (order_amt / order_qty).to_f.round(2) if order_qty != 0
             refund_amt  = self.refund_amount(sku)
-            refund_rate = refund_average_rate(sku)
-            refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
+            product_price = Product.find_by(upc: sku).price || 0
+            if product_price != 0
+              refund_qty  = (refund_amt / product_price).round
+            else
+              refund_qty = 0
+            end
+            refund_rate = (refund_amt / refund_qty) if refund_qty != 0
             disc_amt    = self.promotion_amount(sku)
             disc_rate   = self.promotion_rate(sku)
             disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
@@ -556,8 +561,13 @@ class AmazonSummary
           order_amt   = self.order_amount(sku)
           order_rate  = (order_amt / order_qty).to_f.round(2) if order_qty != 0
           refund_amt  = self.refund_amount(sku)
-          refund_rate = refund_average_rate(sku)
-          refund_qty  = (refund_amt / refund_rate).to_f.round(2) if refund_rate != 0
+          product_price = Product.find_by(upc: sku).price || 0
+          if product_price != 0
+            refund_qty  = (refund_amt / product_price).round
+          else
+            refund_qty = 0
+          end
+          refund_rate = (refund_amt / refund_qty) if refund_qty != 0
           disc_amt    = self.promotion_amount(sku)
           disc_rate   = self.promotion_rate(sku)
           disc_qty    = (disc_amt / disc_rate).to_f.round(2) if disc_rate != 0
