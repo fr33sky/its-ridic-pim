@@ -3,7 +3,7 @@ module SalesHelper
     if sale.product.nil?
       sale.description
     else
-      sale.description || sale.product.name
+      sale.product.name || sale.description
     end
   end
 end
