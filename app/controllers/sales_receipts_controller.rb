@@ -57,6 +57,6 @@ class SalesReceiptsController < ApplicationController
   end
 
   def sales_receipt_params
-    params.require(:sales_receipt).permit(:contact_id, :payment_id, :user_date, sales_attributes: [:id, :quantity, :product_id, :sales_receipt_id, :amount, :rate])
+    params.require(:sales_receipt).permit(:contact_id, :payment_id, :user_date, sales_attributes: [:id, :quantity, :product_id, :sales_receipt_id, :amount, :rate, :_destroy])
   end
 end
