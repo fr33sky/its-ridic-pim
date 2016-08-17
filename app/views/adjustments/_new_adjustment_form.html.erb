@@ -1,8 +1,8 @@
 <div class="new-product">
   <%= simple_form_for(@adjustment, remote: true, html: { class: "", id: "new-adjustment-form" }) do |f| %>
-      <%= f.association :product, class: "form-control" %>
-      <%= f.association :adjustment_type, class: "form-control" %>
-      <%= f.input :adjusted_quantity %>
-      <%= f.submit "Submit", class: "btn btn-primary" %>
+    <%= f.association :product, collection: Product.all.order(:name), prompt: "Choose a Product", class: "form-control" %>
+    <%= f.association :adjustment_type, collection: AdjustmentType.all.order(:name), prompt: "Choose Adjustment Type", class: "form-control" %>
+    <%= f.input :adjusted_quantity %>
+    <%= f.submit "Submit", class: "btn btn-primary" %>
   <% end %>
 </div>
