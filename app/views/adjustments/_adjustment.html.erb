@@ -1,0 +1,8 @@
+<tr id="adjustment-<%= adjustment.id %>">
+  <td><%= adjustment.product.name %></td>
+  <td><%= adjustment.adjustment_type.name %></td>
+  <td><%= adjustment.adjusted_quantity %></td>
+  <td><%= link_to 'Show', adjustment, class: "btn btn-sm btn-primary" %></td>
+  <td><%= link_to 'Edit', edit_adjustment_path(adjustment), class: "btn btn-sm btn-success" %></td>
+  <td><%= link_to 'Destroy', adjustment, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-danger" %></td>
+</tr>

@@ -1,19 +1,17 @@
 <p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Product:</strong>
-  <%= @adjustment.product %>
-</p>
-
-<p>
-  <strong>Adjustment type:</strong>
-  <%= @adjustment.adjustment_type %>
-</p>
-
-<p>
-  <strong>Adjusted quantity:</strong>
-  <%= @adjustment.adjusted_quantity %>
-</p>
-
+<table class="table">
+  <thead>
+    <th>Product</th>
+    <th>Adjustment Type</th>
+    <th>Adjusted Quantity</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @adjustment.product.name %></td>
+      <td><%= @adjustment.adjustment_type.name %></td>
+      <td><%= @adjustment.adjusted_quantity %></td>
+    </tr>
+  </tbody>
+</table>
 <%= link_to 'Edit', edit_adjustment_path(@adjustment) %> |
 <%= link_to 'Back', adjustments_path %>

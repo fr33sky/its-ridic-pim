@@ -4,7 +4,8 @@ class AdjustmentsController < ApplicationController
   # GET /adjustments
   # GET /adjustments.json
   def index
-    @adjustments = Adjustment.all
+    @adjustments = Adjustment.all.includes(:product, :adjustment_type)
+    @adjustment = Adjustment.new
   end
 
   # GET /adjustments/1
@@ -29,6 +30,7 @@ class AdjustmentsController < ApplicationController
     respond_to do |format|
       if @adjustment.save
         format.html { redirect_to @adjustment, notice: 'Adjustment was successfully created.' }
+        format.js {}
         format.json { render :show, status: :created, location: @adjustment }
       else
         format.html { render :new }
