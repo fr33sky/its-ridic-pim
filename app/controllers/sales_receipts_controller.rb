@@ -2,7 +2,7 @@ class SalesReceiptsController < ApplicationController
   before_action :set_receipt, only: [:show, :edit, :update, :destroy]
 
   def index
-    @sales_receipts = SalesReceipt.includes(:contact, :sales => :product)
+    @sales_receipts = SalesReceipt.includes(:contact, :sales => :product).order("user_date DESC")
   end
 
   def show
